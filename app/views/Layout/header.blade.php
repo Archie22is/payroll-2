@@ -1,6 +1,7 @@
 		
 		<!-- Styles -->
 		<!-- Bootstrap CSS -->
+	
 		{{	HTML::style('public/css/bootstrap.min.css')	}}
 		<!-- jQuery gritter -->
 		{{ HTML::style('public/css/jquery.gritter.css')	}}

@@ -1,4 +1,7 @@
 @extends('layout.main')
+@section('css')
+	{{ HTML::style('public/css/steps.css') }}
+@stop
 @section('content')
 
 <!-- main content start -->
@@ -15,23 +18,23 @@
 				<!-- Page Form -->
 				<div class="page-form">
 					<!-- Form Content -->
-					<form action="#" class="form-horizontal" name="CInformation">
+					<form action="<?php echo URL::to('admin/user/create') ?>" method="post" class="form-horizontal" name="create" id="create">
 						<!-- Form wizard content -->
-						<div id="wizard">
+						<div id="wizard" style="position:inherit">
 						<!-- Heading -->
-							<h2>General Information</h2>
+							<h2>General Info</h2>
 							<!-- First step of content -->
 							<div class="form">
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="company_name">Company Name</label>
 									<div class="col-lg-5">
-										<input type="text" name="company_name" id="company_name" placeholder="Company name" class="form-control">
+										<input type="text" name="company_name" id="company_name" placeholder="Company name" class="form-control required">
 									</div><!-- input company_name -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="company_address">Address</label>		
 									<div class="col-lg-5">
-										<textarea class="form-control" name="company_address" id="company_address" placholder="Address"></textarea>
+										<textarea class="form-control textarea" name="company_address" id="company_address" placholder="Address"></textarea>
 									</div>
 								</div>
 								<div class="form-group">
@@ -88,9 +91,10 @@
 										<input type="text" name="company_website" id="company_website" placeholder="Website" class="form-control">
 									</div><!-- input-website -->
 								</div><!-- end form-group -->
-							</div><!-- end Form -->
+								</div><!-- end Form -->
+
 							<!-- first step end -->
-							<h2>Contact Information</h2>
+							<h2>Contact Info</h2>
 							<!-- Second step starts -->
 							<div class="form2">
 								<div class="form-group">
@@ -156,7 +160,7 @@
 							</div><!-- end form2 -->
 							<!-- end second step -->
 							<!-- Heading -->
-							<h2>Registration Information</h2>
+							<h2>Registration Info</h2>
 							<!-- third step starts -->
 							<div class="form3">
 								<div class="form-group">
@@ -174,7 +178,7 @@
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="reg_incorporation_date">InCorporation Date</label>
 									<div class="col-lg-5">
-										<input type="text" id="reg_incorporation_date" name="reg_incorporation_date" placeholder="InCorporation Date" class="form-control">
+										<input type="text" id="reg_incorporation_date" name="reg_incorporation_date" placeholder="InCorporation Date" class="date form-control">
 									</div><!--  end input -->
 								</div><!-- end form-group -->
 								<div class="form-group">
@@ -192,7 +196,7 @@
 							</div><!-- end form3 -->
 							<!-- third step ends -->
 							<!-- fourth step starts -->
-							<h2>Professional Tax Information</h2>
+							<h2>Professional Tax Info</h2>
 							<div class="form4">
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="pt">PT</label>
@@ -203,7 +207,7 @@
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="pt_registration_date">Registration Date</label>
 									<div class="col-lg-5">
-										<input type="text" id="pt_registration_date" name="pt_registration_date" placeholder="Registration Date" class="form-control">
+										<input type="text" id="pt_registration_date" name="pt_registration_date" placeholder="Registration Date" class="date form-control">
 									</div><!--  end input -->
 								</div><!-- end form-group -->
 								<div class="form-group">
@@ -216,7 +220,7 @@
 							</div><!-- end form4 -->
 							<!-- fourth step ends -->
 							<!-- step five starts -->
-							<h2>Provident Fund Information</h2>
+							<h2>Provident Fund Info</h2>
 							<div class="form5">
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="provident_fund">Provident Fund</label>
@@ -227,7 +231,7 @@
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="provident_registration_date">Registration Date</label>
 									<div class="col-lg-5">
-										<input type="text" id="provident_registration_date" name="provident_registration_date" placeholder="Registration Date" class="form-control">
+										<input type="text" id="provident_registration_date" name="provident_registration_date" placeholder="Registration Date" class="date form-control">
 									</div><!--  end input -->
 								</div><!-- end form-group -->
 								<div class="form-group">
@@ -261,7 +265,7 @@
 							</div><!-- end form5  -->
 							<!-- end step five -->
 							<!-- step six starts -->
-							<h2>Esi Information</h2>
+							<h2>ESI Info</h2>
 							<div class="form6">
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="esi">ESI</label>
@@ -272,7 +276,7 @@
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="esi_registration_date">Registration Date</label>
 									<div class="col-lg-5">
-										<input type="text" id="esi_registration_date" name="esi_registration_date" placeholder="Registration Date" class="form-control">
+										<input type="text" id="esi_registration_date" name="esi_registration_date" placeholder="Registration Date" class="date form-control">
 									</div><!--  end input -->
 								</div><!-- end form-group -->
 								<div class="form-group">
@@ -296,7 +300,7 @@
 							</div><!-- end form6  -->
 							<!-- end step six -->
 							<!-- step seven starts -->
-							<h2>Income Tax Information</h2>
+							<h2>Income Tax Info</h2>
 							<div class="form7">
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="itax_signatory_name">Signatory Name</label>
@@ -342,76 +346,6 @@
 								</div><!-- end form-group -->
 							</div><!-- end form7  -->
 							<!-- end step seven -->
-							<!-- step eight starts -->
-							<h2>Labor Law Information</h2>
-							<div class="form8">
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="labor_employer_name">Employer Name</label>
-									<div class="col-lg-5">
-										<input type="text" id="labor_employer_name" name="labor_employer_name" placeholder="Employer Name" class="form-control">
-									</div><!--  end input -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="labor_address">Address</label>
-									<div class="col-lg-5">
-										<input type="text" id="labor_address" name="labor_address" placeholder="Address" class="form-control">
-									</div><!--  end input -->
-								</div><!-- end form-group -->
-							</div><!-- end form8  -->
-							<!-- end step eight -->
-							<!-- step nine starts -->
-							<h2>Bank Details</h2>
-							<div class="form9">
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="bank_name">Bank Name</label>
-									<div class="col-lg-5">
-										<input type="text" id="bank_name" name="bank_name" placeholder="Bank Name" class="form-control">
-									</div><!--  end input -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="account_no">Account No</label>
-									<div class="col-lg-5">
-										<input type="text" id="account_no" name="account_no" placeholder="Account No" class="form-control">
-									</div><!--  end input -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="account_type">Account Type</label>
-									<div class="col-lg-5">
-										<select  id="account_type" name="account_type"  class="form-control">
-										<option value="">-------</option>
-										</select>
-									</div><!--  end input -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="branch">Branch</label>
-									<div class="col-lg-5">
-										<input type="text" id="branch" name="branch" placeholder="Branch" class="form-control">
-									</div><!--  end input -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="micr_no">MICR NO</label>
-									<div class="col-lg-5">
-										<input type="text" id="micr_no" name="micr_no" placeholder="MICR NO" class="form-control">
-									</div><!--  end input -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="ifsc_code">IFSC Code</label>
-									<div class="col-lg-5">
-										<input type="text" id="ifsc_code" name="ifsc_code" placeholder="IFSC Code" class="form-control">
-									</div><!--  end input -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="status">Status</label>
-									<div class="col-lg-5">
-										<select id="status" name="status" class="form-control">
-											<option value="">--------</option>
-											<option value="active">Active</option>
-											<option value="inactive">InActive</option>
-										</select>
-									</div><!--  end input -->
-								</div><!-- end form-group -->
-							</div><!-- end form9  -->
-							<!-- end step nine -->
 						</div><!-- end wizard  -->
 					</form><!-- end form name='CInformation' -->
 				</div><!-- end page-form -->
@@ -419,3 +353,18 @@
 		</div><!-- end container -->
 	</div><!-- end main-content -->
 @stop
+@section('script')
+{{HTML::style('public/css/jquery-ui-1.10.4.custom.min.css')}}
+{{HTML::script('public/js/jquery-ui-1.10.4.custom.min.js')}}
+<script type="text/javascript">
+$(function(){
+	$('.date').datepicker({
+		dateFormat:'dd/mm/yy',
+		changeYear:true,
+		changeMonth:true
+	});
+	});
+</script>
+@stop
+
+

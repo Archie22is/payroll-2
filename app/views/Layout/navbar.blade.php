@@ -93,15 +93,20 @@
 				<div class="col-md-3 hidden-sm hidden-xs">
 					<div class="head-user dropdown pull-right">
 						<a href="#" data-toggle="dropdown" id="profile">
+							
+							@if(Auth::user()->contact)
+							{{ HTML::image('public/img/'.Auth::user()->contact->image,'',array('class'=>"img-responsive img-circle"))}}
+							@else
 							<i class="fa fa-user"></i>
-							<!-- <img src="#" alt="" class="img-responsive img-circle"/> -->
+							@endif
 							<!-- this image for if any image available then only enable -->
 							<!-- Username -->
-							Bhoopal 
+							{{ ucfirst(Auth::user()->displayname)}}
+							<i class="fa fa-caret-down"></i>
 						</a>
 						<!-- dropdown -->
 						<ul class="dropdown-menu" aria-labelledby="profile">
-							<li><a href="#">View/Edit Profile</a></li>
+							<li><a href="<?php echo URL::to(Auth::getProfile().'/users').'/'.Auth::user()->id; ?>">View/Edit Profile</a></li>
 							<li><a href="#">Change Settings</a></li>
 							<li><a href="<?php echo URL::to('account/sign-out') ?>">Sign Out</a></li>
 						</ul><!-- end dropdown-menu -->
@@ -110,3 +115,4 @@
 			</div><!-- end row -->
 		</div><!-- end container -->
 	</div><!-- end main-head -->
+

@@ -106,6 +106,7 @@ $(function() {
 	});
 });
 
+
 $(function() {
 	$('#datetimepicker2').datetimepicker({
 		pickDate: false
@@ -290,6 +291,7 @@ $().ready(function() {
 			agree: "Please accept our policy"
 		}
 	});
+ 
 
 });
 
@@ -301,16 +303,22 @@ $(document).ready(function() {
 
 	$("#wizard").steps({
 		transitionEffect: "slide",
-		autoFocus: true
+		autoFocus: true,
+    onFinished: function()
+    {
+       $('#create').submit();
+    }
+
 	});
+
 });
 
 /* ****************************************** */
 /* Compose Mail Form word processor JS */
 /* ****************************************** */
 
-$('.textarea').wysihtml5();
-$(prettyPrint);
+ //$('.textarea').wysihtml5();
+//$(prettyPrint);
 
 /* ****************************************** */
 /* Task widget */

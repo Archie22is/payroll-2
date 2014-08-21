@@ -15,6 +15,9 @@
 				<!-- sidebar heading -->
 					<!-- if we need sidebar heading keep with h1,h2,.. -->
 				<!-- end sidebar heading   -->
+				@if(Auth::check())
+				@if(Auth::getProfile() == 'admin')
+				<!-- Admin Part -->
 				<ul class="list-unstyled">
 					<li><a href="#" class="active"><i class='fa fa-desktop'></i>Dashboard</a></li>
 					<!-- main-menu with submenu -->
@@ -24,9 +27,33 @@
 						<!-- sub menu starts -->
 						<ul class="list-unstyled">
 							<li><a href="<?php echo URL::to('admin/user/create'); ?>"><i class="fa fa-file"></i>CompanyInformation</a></li>
+							<li><a href="<?php echo URL::to('admin/user/labour-law-information'); ?>"><i class="fa fa-file"></i>Labour Law Information</a></li>
+							<li><a href="<?php echo URL::to('admin/bank'); ?>"><i class="fa fa-file"></i>Manage Bank</a></li>
 						</ul><!-- submenu ends here -->
 					</li><!-- Company profile ends -->
+					<li><a href="<?php echo URL::to('admin/branch'); ?>"><i class="fa fa-user"></i>Manage Branch</a></li><!-- manage manager -->
 				</ul><!-- list-unstyled -->
+				<!-- Admin Part ended -->
+				@elseif(Auth::getProfile() == 'branch')
+				<!-- Branch Part -->
+				<ul class="list-unstyled">
+					<li><a href="#" class="active"><i class='fa fa-desktop'></i>Dashboard</a></li>
+					<li><a href="<?php echo URL::to('branch/client'); ?>"><i class="fa fa-user"></i>Manage Client</a></li><!-- manage Client -->
+				</ul><!-- list-unstyled -->
+				<!-- Branch Part ended -->
+				<!-- Client slidebar -->
+				@elseif(Auth::getProfile() == 'client')
+				<!-- employee part -->
+				<ul class="list-unstyled">
+					<!-- Dashboard -->
+					<li><a href=""><i class="fa fa-desktop"></i>Dashboard</a></li>
+					<!-- manage Employee  -->
+					<li><a href="{{url('client/emp')}}"><i class="fa fa-file"></i>Manage Employee</a></li> 
+
+				</ul>
+				<!-- End Client Sidebar -->
+				@endif
+				@endif
 			</div><!-- end side-nav-block -->
 		</div><!-- end side-nav -->
 	</div><!-- end sidey -->		

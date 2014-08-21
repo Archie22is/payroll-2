@@ -38,12 +38,19 @@
 						<div class="tab-pane fade active in" id="login">
 							<!-- Login form -->
 							<!-- error message -->
-							 <span style="color: red"><!-- error message -->
-		                        @if($errors->has('error'))
+							    @if($errors->has('error'))
+		                        <div class="alert alert-danger">
 		                          {{$errors->first('error')}}
+		                         </div>
 		                        @endif
-					         </span><!-- end error message -->
-							<!-- end error messsage -->
+					         <!-- end error message -->
+					         <!-- success message -->
+							 @if(Session::has('success'))
+							 	<div class="alert alert-success">
+							 		{{ Session::get('success') }}
+							 	</div>
+							 @endif
+							<!-- end success messsage -->
 							<form role="form" action="<?php echo URL::to('account/login') ?>" method="post" onsubmit="return LoginValidation()">
 								<!-- csrf security -->
 								{{ Form::token() }}
@@ -67,8 +74,9 @@
 								</div><!-- end form-group -->
 								<div class="checkbox">
 									<label>
-									  <input type="checkbox" name="rememder" value="1"> Remember Me Next Time
+									  <input type="checkbox" name="rememder" value="1"> Remember Me
 									</label>
+									<span class="pull-right">Forget password ? <a href="{{ url('account/forget-password'); }}" style="color:blue!important">click here</a></span>
 								</div><!-- end check box -->
 								  <button type="submit" class="btn btn-info btn-block">Login</button>
 								  <!-- <button type="reset" class="btn btn-default btn-sm">Reset</button> -->
@@ -108,6 +116,13 @@
         		}
         	}
 		</script>
+		<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(600, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+    }, 5000);
+</script>
 		
 	</body>	
 </html>

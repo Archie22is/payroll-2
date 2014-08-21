@@ -43,7 +43,7 @@ Route::filter('auth', function()
 		}
 		else
 		{
-			return Redirect::guest('login');
+			return Redirect::guest('account/login');
 		}
 	}
 });
@@ -93,6 +93,36 @@ Route::filter('admin',function(){
 	if(Auth::check() && $profile=Auth::getProfile())
 	{
 		if($profile != 'admin')
+		{
+			return Redirect::guest(URL::to($profile));
+		}
+	}
+	else
+	{
+		Session::put('login_redirect', URL::current());
+		return Redirect::guest(URL::to('account/login'));
+	}
+});
+
+Route::filter('branch',function(){
+	if(Auth::check() && $profile=Auth::getProfile())
+	{
+		if($profile != 'branch')
+		{
+			return Redirect::guest(URL::to($profile));
+		}
+	}
+	else
+	{
+		Session::put('login_redirect', URL::current());
+		return Redirect::guest(URL::to('account/login'));
+	}
+});
+
+Route::filter('client',function(){
+	if(Auth::check() && $profile=Auth::getProfile())
+	{
+		if($profile != 'client')
 		{
 			return Redirect::guest(URL::to($profile));
 		}

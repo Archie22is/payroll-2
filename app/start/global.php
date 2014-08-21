@@ -48,12 +48,11 @@ Log::useFiles(storage_path().'/logs/laravel.log');
 
 App::error(function(Exception $exception, $code,$fromConsole)
 {
-	// Log::error($exception);
-
+	Log::error($exception);
 
 	if ( $fromConsole )
     {
-        return 'Error '.$code.': '.$exception->getMessage()."\n".$exception->getTrace();
+      return 'Error '.$code.': '.$exception->getMessage()."\n".$exception->getTrace();
     }
     echo '<h1>Error '.$code.'</h1>';
     return '<p>'.$exception->getMessage().$exception->getLine().'</p></br>'.$exception;
