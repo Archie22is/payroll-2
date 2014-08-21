@@ -20,15 +20,15 @@
 					</ul><!-- end nav nav-tabs -->
 					<!-- Tab Panes -->
 					<div class="tab-content">
-						<!-- All Clients -->
+						<!-- All employee -->
 						<div class="tab-pane fade active in" id="allclients">
-							@include('client/emp.view')
-						</div><!-- end allclient -->
+							@include('branch/emp.view')
+						</div><!-- end allemployee -->
 						<!-- end AllClients -->
 						<!-- Add new -->
 						<div class="tab-pane fade" id="addNew">
 							<h4>Add New Employee</h4>
-							@include('client/emp.create')
+							@include('branch/emp.create')
 						</div><!-- end tab-pane addNew -->
 						<!-- End Add New -->
 					</div><!-- end tab-content -->

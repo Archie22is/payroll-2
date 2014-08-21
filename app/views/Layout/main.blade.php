@@ -45,7 +45,8 @@
             $(this).remove();
         });
     }, 5000);
-    
+
 </script>
+
 </body>
 </html>

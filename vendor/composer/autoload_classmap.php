@@ -14,6 +14,7 @@ return array(
     'App\\Controller\\Admin\\UserController' => $baseDir . '/app/controllers/admin/UserController.php',
     'App\\Controller\\Branch\\ClientController' => $baseDir . '/app/controllers/branch/ClientController.php',
     'App\\Controller\\Branch\\ControllerBase' => $baseDir . '/app/controllers/branch/ControllerBase.php',
+    'App\\Controller\\Branch\\EmployeeController' => $baseDir . '/app/controllers/branch/EmployeeController.php',
     'App\\Controller\\Branch\\IndexController' => $baseDir . '/app/controllers/branch/IndexController.php',
     'App\\Controller\\Client\\ControllerBase' => $baseDir . '/app/controllers/client/ControllerBase.php',
     'App\\Controller\\Client\\EmployeeController' => $baseDir . '/app/controllers/client/EmployeeController.php',

@@ -39,6 +39,8 @@
 				<ul class="list-unstyled">
 					<li><a href="#" class="active"><i class='fa fa-desktop'></i>Dashboard</a></li>
 					<li><a href="<?php echo URL::to('branch/client'); ?>"><i class="fa fa-user"></i>Manage Client</a></li><!-- manage Client -->
+					<li><a href="<?php echo URL::to('branch/employee'); ?>"><i class="fa fa-user"></i>Manage Employee</a></li><!-- manage Employee -->
+
 				</ul><!-- list-unstyled -->
 				<!-- Branch Part ended -->
 				<!-- Client slidebar -->

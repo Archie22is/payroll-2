@@ -1,6 +1,5 @@
 <?php 
-namespace App\Controller\Client;
-
+namespace App\Controller\Branch;
 class EmployeeController extends ControllerBase {
 
 	/**
@@ -10,8 +9,10 @@ class EmployeeController extends ControllerBase {
 	 */
 	public function index()
 	{
-		
-		return \View::make('client/emp.manage_employee');
+		$uId=\Auth::user()->id;
+		$list=\Friends::where('parent_id','=',$uId)->get();
+		return \View::make('branch/emp.manage')
+					->with('list',$list);
 	}
 
 

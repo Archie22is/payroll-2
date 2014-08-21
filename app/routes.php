@@ -39,6 +39,7 @@ Route::group(array('before'=>'admin','prefix'=>'admin'),function(){
 Route::group(array('before'=>'branch','prefix'=>'branch'),function(){
 	Route::get('/','App\Controller\Branch\IndexController@getIndex');
 	Route::resource('client','App\Controller\Branch\ClientController');
+	Route::resource('employee','App\Controller\Branch\EmployeeController');
 });
 // Client Routes
 Route::group(array('before'=>'client','prefix'=>$profile),function(){

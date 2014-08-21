@@ -1,7 +1,7 @@
 @section('css')
 	{{ HTML::style('public/css/steps.css') }}
 @stop
-{{Form::open(array('route'=>array('client.emp.store'),'method'=>'post','class'=>'form-horizontal','name'=>'create','id'=>'create')) }}
+{{Form::open(array('route'=>array('branch.employee.store'),'method'=>'post','class'=>'form-horizontal','name'=>'create','id'=>'create')) }}
 	<!-- Form wizard content -->
 	<div id="wizard" style="position:inherit">
 	<!-- Heading -->
@@ -454,6 +454,34 @@
 			</div><!-- end form-group -->
 		</div>
 		<!-- End Work Experience -->
+		<!-- start EmployeeType -->
+		<h2>Employee Type</h2>
+		<div class="form9">
+			<div class="form-group">
+				<label for="emptype" class="col-lg-2">Employee Type</label>
+				<div class="col-lg-5">
+					<select name="emptype" id="emptype" onchange="var inh=$(this).val(); if(inh == 'outsource'){ $('#outsource').show(); }else{ $('#outsource').hide(); }">
+						<option value="inhouse">In-House</option>
+						<option value="outsource">Out-Source</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group" id="outsource" style="display:none">
+				<label for="outsourcelist" class="col-lg-2">Out Sources</label>
+				<div class="col-lg-5">
+					<select name="outsourcelist" id="outsourcelist" >
+						@forelse($list as $client)
+							
+							<option value="{{$client->user->id}}">{{$client->user->company->company_name}}</option>
+							
+						@endforeach
+					</select>
+				</div>
+			</div>
+		</div><!-- end form9 -->
+
+		<!-- End EmployeeType -->
+		
 	</div><!-- end wizard -->
 {{Form::close()}}<!-- end form -->
 @section('script')
