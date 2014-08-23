@@ -11,5 +11,9 @@
 		{{	HTML::style('public/css/less-style.css')	}}
 		<!-- Custom CSS -->
 		{{	HTML::style('public/css/style.css')	}}
+
+		<!-- spiner -->
+
+		{{HTML::style('public/css/spiner.css')}}
 				
 		<!-- Favicon -->

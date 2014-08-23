@@ -20,6 +20,7 @@ Route::get('account/sign-out','AccountController@getSignOut');
 Route::get('account/create-password','AccountController@getCreatePassword');
 Route::post('account/create-password','AccountController@postCreatePassword');
 Route::get('account/recover/{code}','AccountController@getRecover');
+Route::get('home/template/{code}','HomeController@template');
 
 Route::group(array('before'=>'guest'),function(){
 	Route::get('account/login','AccountController@getLogin');
@@ -49,5 +50,6 @@ Route::group(array('before'=>'client','prefix'=>$profile),function(){
 // Authentication Routes
 Route::group(array('before'=>'auth','prefix'=>$profile),function(){
 	Route::resource('users','UsersController');
+
 });
 

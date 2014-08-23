@@ -19,9 +19,10 @@ class HomeController extends BaseController {
 	{
 		return View::make('hello');
 	}
-	public function manul()
+	public function template($code)
 	{
-		echo "hello";
+		return View::make('template.jstemplate')
+					->with('data',$code);
 	}
 
 }

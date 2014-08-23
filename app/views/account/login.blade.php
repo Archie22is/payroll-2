@@ -30,12 +30,12 @@
 			<div class="login-page">
 					<!-- Nav tabs -->
 					<ul class="nav nav-tabs nav-justified">
-					  <li><a href="#login" data-toggle="tab" class="br-lblue"><i class="fa fa-sign-in"></i> Sign In</a></li>
+					  <li><a  class="br-lblue" style="hover {background: yellow}"><i class="fa fa-sign-in"></i> Sign In</a></li>
 					 </ul>
 					<!-- Tab panes -->
 					
 					<div class="tab-content">
-						<div class="tab-pane fade active in" id="login">
+						<div class="tab-pane  active" id="login">
 							<!-- Login form -->
 							<!-- error message -->
 							    @if($errors->has('error'))
