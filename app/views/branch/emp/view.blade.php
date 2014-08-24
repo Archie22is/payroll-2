@@ -22,9 +22,9 @@
 					<table style="border-left:none!important">
 						<tr>
 							<td style="padding: 0px!important;border-left:none!important;">
-							
+							{{Form::open(array('route'=>array('branch.employee.edit',$emp->emp->id),'method'=>'get'))}}
 								<button class="btn btn-info btn-xs" title="Edit" type="submit"><i class="fa fa-pencil"></i></button>
-								
+							{{Form::close()}}	
 							</td>
 							<td style="padding: 0px!important;border-left:none!important;">|</td>
 							<td style="padding: 0px!important;border-left:none!important;">

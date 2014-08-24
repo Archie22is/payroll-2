@@ -67,7 +67,7 @@
 			$('.date').datepicker({
 			changeYear:true,
 			changeMonth:true,
-			dataFormat:'dd/mm/yy'	
+			dateFormat:'dd/mm/yy'	
 		});
 		})
 		</script>

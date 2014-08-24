@@ -138,7 +138,7 @@
 			<div class="form-group">
 				<label class="col-lg-2 control-label" for="p_address">Permanent Address</label>
 				<div class="col-lg-5">
-					<textarea name="p_address" id="p_address" placeholder="Address" class="form-control"></textarea>
+					<textarea name="p_address" id="p_address" placeholder="Parmanent Address" class="form-control"></textarea>
 				</div><!-- end input-form  -->
 			</div><!-- end form-group --> 
 			<div class="form-group">
@@ -385,9 +385,9 @@
 				</div><!-- end select -->
 			</div><!-- end form-group -->
 			<div class="form-group">
-				<label for="emptype" class="col-lg-2">Employee Type</label>
+				<label for="emptype" class="control-label col-lg-2">Employee Type</label>
 				<div class="col-lg-5">
-					<select name="emptype" id="emptype" onchange="var inh=$(this).val(); if(inh == 'outsource'){ $('#outsource').show(); }else{ $('#outsource').hide(); }">
+					<select name="emptype" id="emptype" class="col-lg-12" onchange="var inh=$(this).val(); if(inh == 'outsource'){ $('#outsource').show(); }else{ $('#outsource').hide(); }">
 						<option value="inhouse">In-House</option>
 						<option value="outsource">Out-Source</option>
 					</select>
@@ -395,13 +395,13 @@
 			</div><!-- end form-group -->
 			<!-- only if out-source -->
 			<div class="form-group" id="outsource" style="display:none">
-				<label for="outsourcelist" class="col-lg-2">Out Sources</label>
+				<label for="outsourcelist" class="control-label col-lg-2">Out Sources</label>
 				<div class="col-lg-5">
-					<select name="outsourcelist" id="outsourcelist" >
+					<select name="outsourcelist" id="outsourcelist" class="col-lg-12">
 						@forelse($client as $clients)
 							@if($clients->user)
 								@if($clients->user->company)
-							<option value="{{$client->user->id}}">{{$clients->user->company->company_name}}</option>
+							<option value="{{$clients->user->id}}">{{$clients->user->company->company_name}}</option>
 								@endif
 							@endif
 						@endforeach
@@ -606,19 +606,12 @@
 			
 		}
 	}
-	function datePick()
-	{
-		$('.date').datepicker({
-			changeYear:true,
-			changeMonth:true,
-			dataFormat:'dd/mm/yy'	
-		});
-	}
+	
 	$(document).ready(function(){
 		$('.date').datepicker({
 			changeYear:true,
 			changeMonth:true,
-			dataFormat:'dd/mm/yy'	
+			dateFormat:'dd/mm/yy'	
 		});
 		
 		$('#addDoc').click(function(){

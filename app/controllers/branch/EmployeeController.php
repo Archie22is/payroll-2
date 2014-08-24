@@ -10,7 +10,7 @@ class EmployeeController extends ControllerBase {
 	public function index()
 	{
 		$uId  =\Auth::user()->id;
-		$clients=\Friends::where('parent_id','=',$uId)->get();
+		$client=\Friends::where('parent_id','=',$uId)->get();
 		$list =\BranchEmp::where('branch_id','=',$uId)->paginate(1);
 		return \View::make('branch/emp.manage')
 					->with('client',$client)
@@ -88,6 +88,7 @@ class EmployeeController extends ControllerBase {
 		$spousename     = \Input::get('spousename');
 		$bloodgroup     = \Input::get('bloodgroup');
 		$image          = \Input::hasFile('image');
+		$sibling		= \Input::get('sibling');
 		//Image process
 		if($image)// condition for if image is found or not
 		{
@@ -126,6 +127,7 @@ class EmployeeController extends ControllerBase {
 				'dateofbirth'    =>$dateofbirth,
 				'maritialstatus' =>$maritialstatus,
 				'spousename'     =>$spousename,
+				'sibling'		 =>$sibling,
 				'bloodgroup'     =>$bloodgroup,
 				'image'          =>$imagename,
 				'signature'      =>$signName,
@@ -281,7 +283,7 @@ class EmployeeController extends ControllerBase {
 			$mastername        = \Input::get('mastername');
 			$masterplace       = \Input::get('masterplace');
 			$masterpercentage  = \Input::get('masterpercentage');
-			$eduction          = \EmpEduction::insertGetId(array(
+			$eduction          = \EmpEducation::insertGetId(array(
 						'user_id'            => $userId,
 						'school_name'        => $schoolname,
 						'school_location'    => $schoolplace,
@@ -342,6 +344,7 @@ class EmployeeController extends ControllerBase {
 		    	$filename='_'.Date('ymdis').str_replace(' ','',$document[$a]->getClientOriginalName());
 		    	$document[$a]->move('public/img/emp/doc/',$filename);
 		    	$empDoc= \EmpDoc::insertGetId(array(
+		    				'user_id'=>$userId,
 		    				'doc_name'=>$doc_name[$a],
 		    				'document'=>$filename
 		    				));
@@ -387,7 +390,20 @@ class EmployeeController extends ControllerBase {
 	 */
 	public function edit($id)
 	{
-		//
+		$uId=\Auth::user()->id;
+		$emp=\User::where('id','=',$id)->first();
+		if($emp)
+		{
+			$client=\Friends::where('parent_id','=',$uId)->get();
+			return \View::make('branch/emp.edit')
+				->with('emp',$emp)
+				->with('client',$client);
+		}
+		else
+		{
+			\App::abort(404);
+		}
+		
 	}
 
 
@@ -424,59 +440,64 @@ class EmployeeController extends ControllerBase {
 				\DB::rollback();
 				return \Redirect::back()->with('error','Failed to delete');
 			}
-			//delete contact table
-			if(!$user->emp->contact->delete())
+			if(!$user->delete())
 			{
 				\DB::rollback();
 				return \Redirect::back()->with('error','Failed to delete');
+			}
+			//delete employee table
+			if($user->emp->employee)
+			{
+				$user->emp->employee->delete();
+			}
+			//delete contact table
+			if($user->emp->contact)
+			{
+				$user->emp->contact->delete();
 			}
 			//delete identity table
-			if(!$user->emp->empIdentity->delete())
+			if($user->emp->empIdentity)
 			{
-				\DB::rollback();
-				return \Redirect::back()->with('error','Failed to delete');
+				$user->emp->empIdentity->delete();
 			}
 			//delete empBankdetail table
-			if(!$user->emp->empBankDetail->delete())
+			if($user->emp->empBankDetail)
 			{
-				\DB::rollback();
-				return \Redirect::back()->with('error','Failed to delete');
+				$user->emp->empBankDetail->delete();
 			}
 			//delete emp pf esi table
-			if(!$user->emp->empPfEsi->delete())
+			if($user->emp->empPfEsi)
 			{
-				\DB::rollback();
-				return \Redirect::back()->with('error','Failed to delete');
+				$user->emp->empPfEsi->delete();
 			}
 			//delete emp Job detail
-			if(!$user->emp->empJobDetail->delete())
+			if($user->emp->empJobDetail)
 			{
-				\DB::rollback();
-				return \Redirect::back()->with('error','Failed to delete');
+				$user->emp->empJobDetail->delete();
 			}
 			//delete emp Education
-			if(!$user->emp->empEducation->delete())
+			if($user->emp->empEducation)
 			{
-				\DB::rollback();
-				return \Redirect::back()->with('error','Failed to delete');
+				$user->emp->empEducation->delete();
 			}
 			//delete emp work experiance
-			if(!$user->emp->empWorkExperiance->delete())
+			if($user->emp->empWorkExperiance)
 			{
-				\DB::rollback();
-				return \Redirect::back()->with('error','Failed to delete');
+				foreach($user->emp->empWorkExperiance as $empworkExp)
+					{
+						$empworkExp->delete();
+					}
 			}
 			//delete emp Document
-			if(!$user->emp->empDocument->delete())
+			if($user->emp->empDocument)
 			{
-				\DB::rollback();
-				return \Redirect::back()->with('error','Failed to delete');
+				foreach($user->emp->empDocument as $empDoc)
+					{
+						$empDoc->delete();
+					}
 			}
-			else
-			{
-				\DB::commit();
-				return \Redirect::back()->with('success','Successfully deleted');
-			}
+			\DB::commit();
+			return \Redirect::back()->with('success','Successfully deleted');
 		}
 		else
 		{
