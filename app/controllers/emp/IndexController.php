@@ -1,7 +1,7 @@
 <?php 
-namespace App\Controller\Client;
+namespace App\Controller\Emp;
 
-class EmployeeController extends ControllerBase {
+class IndexController extends ControllerBase {
 
 	/**
 	 * Display a listing of the resource.
@@ -11,9 +11,9 @@ class EmployeeController extends ControllerBase {
 	public function index()
 	{
 		$uId=\Auth::user()->id;
-		$list=\JobDetails::where('client_id','=',$uId)->paginate(20);
-		return \View::make('client/emp.manage_employee')
-					->with('list',$list);
+		$detail=\User::findOrFail($uId);
+		return \View::make('emp.index.index')
+				->with('emp',$detail);
 	}
 
 
@@ -47,17 +47,7 @@ class EmployeeController extends ControllerBase {
 	 */
 	public function show($id)
 	{
-		$uId=\Auth::user()->id;
-		$emp=\JobDetails::where('user_id','=',$id)->where('client_id','=',$uId)->first();
-		if($emp)
-		{
-			return \View::make('client/emp.emp_detail')
-						->with('emp',$emp);
-		}
-		else
-		{
-			return \App::abort(404);
-		}
+		//
 	}
 
 

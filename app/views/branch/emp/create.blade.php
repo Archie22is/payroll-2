@@ -343,10 +343,9 @@
 				<label for="department" class="control-label col-lg-2">Department</label>
 				<div class="col-lg-5">
 					<select name="department" id="department" class="col-lg-12">
-						<option value="parmanent">Permanent</option>
-						<option value="probation">Probation</option>
-						<option value="contract">Contract</option>
-						<option value="consultant">Consultant</option>
+					@forelse($dept as $depts)
+						<option value="{{$depts->id}}">{{$depts->name}}</option>
+					@endforeach
 					</select>
 				</div><!-- end select -->
 			</div><!-- end form-group -->

@@ -35,7 +35,7 @@ class AccountController extends BaseController
             if(Auth::attempt(array($field=>$username,'password'=>$password,'active'=>$active),$remember))
             {
                 $mod=Auth::getProfile();
-                Session::get('login_redirect') ? $url = Session::get('login_redirect') : $url = URL::to('/').'/'.$mod;
+                Session::get('login_redirect') ? $url = Session::get('login_redirect') : $url = URL::to('/');
                 // echo $mod. "<>".$url;exit;
                 Session::put('developers.userId',Auth::user()->id);
                 return Redirect::to($url)
@@ -176,7 +176,7 @@ class AccountController extends BaseController
                     if($user->save())
                     {
                         $mod=Auth::getProfile();
-                        return Redirect::to("/$mod")
+                        return Redirect::to("/")
                             ->with('success','Your password has been changed.');
                     }
                     else{
@@ -194,8 +194,13 @@ class AccountController extends BaseController
         {
             App::abort(404);
         }
-        
-       
+    }
+    public function getChangePassword()
+    {
+        return View::make('account.change_password');
+    }
+    public function postChangePassword()
+    {
 
     }
 

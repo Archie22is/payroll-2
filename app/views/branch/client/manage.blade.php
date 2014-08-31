@@ -6,6 +6,13 @@
 		<!-- heading -->
 			<div class="single-head">
 				<!-- Heading -->
+				<div id="status"></div>
+				@if(Session::has('success'))
+					<div class="alert alert-success">{{Session::get('success')}}</div>
+				@endif
+				@if(Session::has('error'))
+				<div class="alert alert-danger">{{Session::get('error')}}</div>
+				@endif
 				<h3 class="pull-left"><i class="fa fa-credit-card red"></i>Client Details</h3>
 				<div class="clearfix"></div>
 			</div><!-- end singlehead -->

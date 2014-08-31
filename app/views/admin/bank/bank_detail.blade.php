@@ -6,7 +6,7 @@
 			<!-- Heading -->
 			<div class="single-head">
 			<!-- Heading -->
-				<h3 class="pull-left"><i class="fa fa-credit-card red"></i>Bank Details</h3>
+				<h3 class="pull-left"><i class="fa fa-credit-card red"></i> Bank Details</h3>
 				<div class="clearfix"></div>
 			</div><!-- end single-head -->
 			<!-- Form page -->
@@ -36,9 +36,9 @@
 										
 
 									</tr>
-									
+									<?php $i=$bank->getFrom(); ?>
 										@forelse( $bank as $banks)	
-										<?php $i=$bank->getFrom(); ?>
+										
 									<tr>
 										<td>{{$i++}}</td>
 										<td>{{ $banks->bank_name}}</td>

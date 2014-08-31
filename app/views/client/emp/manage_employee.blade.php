@@ -6,7 +6,8 @@
 		<!-- heading -->
 			<div class="single-head">
 				<!-- Heading -->
-				<h3 class="pull-left"><i class="fa fa-credit-card red"></i>Employee Details</h3>
+				<?php $company=Auth::user()->company->company_name; ?>
+				<h3 class="pull-left"><i class="fa fa-credit-card red"></i>{{ucfirst($company)}} Employee Details</h3>
 				<div class="clearfix"></div>
 			</div><!-- end singlehead -->
 			<!-- Form page -->
@@ -16,7 +17,7 @@
 					<!-- Nav tabs -->			
 					<ul class="nav nav-tabs">
 						<li class="active"><a href="#allclients" class="br-blue" data-toggle="tab"><i class="fa fa-user lblue"></i>Employees</a></li>
-						<li><a href="#addNew" class="br-red" data-toggle="tab"><i class="fa fa-plus red"></i> Add New</a></li>
+						<!-- <li><a href="#addNew" class="br-red" data-toggle="tab"><i class="fa fa-plus red"></i> Add New</a></li> -->
 					</ul><!-- end nav nav-tabs -->
 					<!-- Tab Panes -->
 					<div class="tab-content">
@@ -26,10 +27,7 @@
 						</div><!-- end allclient -->
 						<!-- end AllClients -->
 						<!-- Add new -->
-						<div class="tab-pane fade" id="addNew">
-							<h4>Add New Employee</h4>
-							@include('client/emp.create')
-						</div><!-- end tab-pane addNew -->
+						
 						<!-- End Add New -->
 					</div><!-- end tab-content -->
 				</div><!-- end page-tabs -->

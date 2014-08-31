@@ -1,7 +1,4 @@
 @extends('layout.main')
-@section('css')
-	{{ HTML::style('public/css/steps.css') }}
-@stop
 @section('content')
 <div class="main-content">
 	<div class="container">
@@ -12,15 +9,19 @@
 				<h3 class="pull-left"><i class="fa fa-credit-card red"></i>Edit Branch Detail</h3>
 				<div class="clearfix"></div>
 			</div><!-- end single-head -->
-			<!-- Form page -->
-			<div class="page-form">
-				{{Form::open(array('route'=>array('admin.branch.update',$branch->id),'method'=>'put','class'=>'form-horizontal','role'=>'form','id'=>'create'))}}
-					<!-- Form wizard content -->
-						<div id="wizard" style="position:inherit">
-						<!-- Heading -->
-							<h2>Branch Info</h2>
+			
+			<div class="page-users">
+				<div class="page-tabs">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#branchTab" class="br-blue" data-toggle="tab">Branch Info</a></li>
+						<li><a href="#contactTab" class="br-blue" data-toggle="tab">Contact Info</a></li>
+					</ul><!-- end ul nav-tabs -->
+					<div class="tab-content">
+						<div class="tab-pane fade active in" id="branchTab">
+							{{Form::open(array('class'=>'form-horizontal','id'=>'branchForm','method'=>'post'))}}
+							<input type="hidden" name="branch_id" value="{{ $branch->id }}">
+								<h4>Branch Info<small style="float:right"><a href="javascript:void(0);"  class="label label-danger"  onclick="var fId=$('#personalval').val();var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 							<!-- Branch information -->
-							<div class="form">
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="branch_name">Branch Name</label>
 									<div class="col-lg-5">
@@ -75,12 +76,13 @@
 										<input type="text" name="branch_fax" id="branch_fax" placeholder="FAX" class="form-control" value="{{$branch->branch_fax}}">
 									</div><!-- input company_name -->
 								</div><!-- end form-group -->
-							</div><!-- end form -->
-							<!-- end branch info -->
-
-							<!-- Contact information -->
-							<h2>Contact Info</h2>
-							<div class="form2">
+							{{Form::close()}}
+						</div>
+						<!-- end  tab pane of branch tab-->
+						<div class="tab-pane fade in" id="contactTab">
+							{{Form::open(array('class'=>'form-horizontal','id'=>'contactForm','method'=>'post'))}}
+								<input type="hidden" name="contact_id" value="{{ $branch->contact->id }}">
+								<h4>Contact Info <small style="float:right"><a href="javascript:void(0);"  class="label label-danger"  onclick="var fId=$('#personalval').val();var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="branch_head">Branch Head</label>
 									<div class="col-lg-5">
@@ -142,12 +144,31 @@
 										<input type="text" name="s_alt_email" id="s_alt_email" placeholder="Alt Email Id" class="form-control" value="{{$branch->contact->s_alt_email}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
-							</div><!-- end form2 -->
-							<!-- end contact Info -->
-						</div><!-- end wizard -->
-				{{Form::close()}}
-			</div><!--  -->
+							{{Form::close()}}
+						</div>
+						<!-- end tab-pane of contactTab -->
+					</div><!-- end tab-content -->
+				</div><!-- end page-tabs -->
+			</div><!-- end page-users -->
+	
 		</div><!--  -->
 	</div><!--  -->
 </div><!--  -->
-@stop							
+@stop	
+@section('script')						
+<script type="text/javascript">
+	function formUpdate(ids)
+	{
+		var datas=$('#'+ids).serializeArray();
+		
+		$.ajax({
+			type:"PUT",
+			data:datas,
+			url:"<?php echo URL::route('admin.branch.update') ?>",
+			success: function(data){
+				alert(data);
+			}
+		});
+	}
+</script>
+@stop

@@ -22,15 +22,21 @@
 					<table style="border-left:none!important">
 						<tr>
 							<td style="padding: 0px!important;border-left:none!important;">
+							{{Form::open(array('route'=>array('branch.employee.show',$emp->emp->id),'method'=>'get'))}}
+								<button class="btn btn-success btn-xs" title="View" type="submit"><i class="fa fa-eye"></i></button>
+							{{Form::close()}}	
+							</td>
+							<td style="padding: 0px!important;border-left:none!important;">|</td>
+							<td style="padding: 0px!important;border-left:none!important;">
 							{{Form::open(array('route'=>array('branch.employee.edit',$emp->emp->id),'method'=>'get'))}}
 								<button class="btn btn-info btn-xs" title="Edit" type="submit"><i class="fa fa-pencil"></i></button>
 							{{Form::close()}}	
 							</td>
 							<td style="padding: 0px!important;border-left:none!important;">|</td>
 							<td style="padding: 0px!important;border-left:none!important;">
-								 {{Form::open(array('route'=>array('branch.employee.destroy',$emp->emp->id),'method'=>'DELETE'))}}
-									<button class="btn btn-danger btn-xs" title="Delete" type="submit" onclick="return confirm('Are you want to delete')"><i class="fa fa-trash-o"></i></button>
-								{{Form::close()}}
+							 {{Form::open(array('route'=>array('branch.employee.destroy',$emp->emp->id),'method'=>'DELETE'))}}
+								<button class="btn btn-danger btn-xs" title="Delete" type="submit" onclick="return confirm('Are you want to delete')"><i class="fa fa-trash-o"></i></button>
+							{{Form::close()}}
 							</td>
 						</tr>
 					</table>

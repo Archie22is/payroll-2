@@ -10,9 +10,11 @@ class EmployeeController extends ControllerBase {
 	public function index()
 	{
 		$uId  =\Auth::user()->id;
+		$dept=\Department::get();
 		$client=\Friends::where('parent_id','=',$uId)->get();
-		$list =\BranchEmp::where('branch_id','=',$uId)->paginate(1);
+		$list =\BranchEmp::where('branch_id','=',$uId)->paginate(20);
 		return \View::make('branch/emp.manage')
+					->with('dept',$dept)
 					->with('client',$client)
 					->with('list',$list);
 	}
@@ -36,6 +38,7 @@ class EmployeeController extends ControllerBase {
 	 */
 	public function store()
 	{
+
 
 		//Transaction starts here
 		\DB::beginTransaction();
@@ -341,27 +344,35 @@ class EmployeeController extends ControllerBase {
 		    $a=0;
 		    foreach($doc_name as $doc)
 		    {
-		    	$filename='_'.Date('ymdis').str_replace(' ','',$document[$a]->getClientOriginalName());
-		    	$document[$a]->move('public/img/emp/doc/',$filename);
-		    	$empDoc= \EmpDoc::insertGetId(array(
-		    				'user_id'=>$userId,
-		    				'doc_name'=>$doc_name[$a],
-		    				'document'=>$filename
-		    				));
-		    	if(!$empDoc)
+		    	if($document[$a])
 		    	{
-		    		\DB::rollback();
-					return \Redirect::back()->with('error','Employee not created try again');
+		    		$filename='_'.Date('ymdis').str_replace(' ','',$document[$a]->getClientOriginalName());
+			    	$document[$a]->move('public/img/emp/doc/',$filename);
+			    	$empDoc= \EmpDoc::insertGetId(array(
+			    				'user_id'=>$userId,
+			    				'doc_name'=>$doc_name[$a],
+			    				'document'=>$filename
+			    				));
+			    	if(!$empDoc)
+			    	{
+			    		\DB::rollback();
+						return \Redirect::back()->with('error','Employee not created try again');
+			    	}
 		    	}
+		    	
 		    	$a++;
 		    }
-		    if($empDoc)
+		    if($email)
 		    {
 		    	\DB::commit();
 		    	\Mail::send('emails.user_credential',array('name'=>$displayname,'username'=>$username,'password'=>$password),function($message) use($email,$username){
 				$message->to($email,$username)->subject('User Credential');
 			});
 		    	return \Redirect::back()->with('success','Employee successfully created');
+		    }
+		    else
+		    {
+		    	return \Redirect::back()->with('error','Failed to create employee');
 		    }
 
 		// End employee documention process
@@ -378,7 +389,19 @@ class EmployeeController extends ControllerBase {
 	 */
 	public function show($id)
 	{
-		//
+		$uId=\Auth::user()->id;
+		$emp=\BranchEmp::where('branch_id','=',$uId)->where('emp_id','=',$id)->first();
+		if($emp)
+		{
+			return \View::make('branch/emp.emp_detail')
+						->with('emp',$emp);
+		}
+		else
+		{
+			\App::abort(404);
+		}
+
+		
 	}
 
 
@@ -394,8 +417,10 @@ class EmployeeController extends ControllerBase {
 		$emp=\User::where('id','=',$id)->first();
 		if($emp)
 		{
+			$dept=\Department::get();
 			$client=\Friends::where('parent_id','=',$uId)->get();
 			return \View::make('branch/emp.edit')
+				->with('dept',$dept)
 				->with('emp',$emp)
 				->with('client',$client);
 		}
@@ -415,7 +440,313 @@ class EmployeeController extends ControllerBase {
 	 */
 	public function update($id)
 	{
-		//
+	
+		if (\Request::ajax())
+			{
+				
+				
+				
+				// print_r(\Input::all());
+				$personalval=\Input::get('personalval');
+				$contactval =\Input::get('contactval');
+				$identval =\Input::get('identval');
+				$pfval 	=\Input::get('pfval');
+				$jobval 	=\Input::get('jobval');
+				$salval 	=\Input::get('salval');
+				$eduval		=\Input::get('eduval');
+				$workExpFrom= \Input::get('workExpFrom');
+			   if(isset($personalval))
+			   {
+			   		$id=$personalval;
+					$firstname      =\Input::get('firstname');
+					$lastname       =\Input::get('lastname');
+					$middlename     =\Input::get('middlename');
+					$fathername     = \Input::get('fathername');
+					$mothermaiden   = \Input::get('mothermaiden');
+					$dateofbirth    = Implode('-',array_reverse(explode('/',\Input::get('dateofbirth'))));
+					$spousename     = \Input::get('spousename');
+					$maritialstatus = \Input::get('maritialstatus');
+					if($maritialstatus != 'married')
+					{
+						$spousename = '';
+					}
+					
+					$bloodgroup     = \Input::get('bloodgroup');
+					$sibling        = \Input::get('sibling');
+					// Call Model
+			   		$personal=	\Employee::findOrFail($id);
+				   		$personal->firstname      = $firstname;
+						$personal->lastname       = $lastname;
+						$personal->middlename     = $middlename;
+						$personal->fathername     = $fathername;
+						$personal->mothermaiden   = $mothermaiden;
+						$personal->dateofbirth    = $dateofbirth;
+						$personal->maritialstatus = $maritialstatus;
+						$personal->spousename     = $spousename;
+						$personal->sibling		  = $sibling;
+						$personal->bloodgroup     = $bloodgroup;
+					if($personal->save())
+					{
+						\Session::flash('success',"Successfully updated");
+						return;
+					}
+					else
+					{
+						echo "Failed to Update";
+						return;
+					}
+			   }
+			   // Contact Values
+			   if(isset($contactval))
+			   {
+			   		$id 		=$contactval;
+			   		$address    =\Input::get('address');
+					$city       =\Input::get('city');
+					$state      =\Input::get('state');
+					$pin        =\Input::get('pin');
+					$p_address  =\Input::get('p_address');
+					$p_city     =\Input::get('p_city');
+					$p_state    =\Input::get('p_state');
+					$p_pin      =\Input::get('p_pin');
+					$mobile     =\Input::get('mobile');
+					$phone      =\Input::get('phone');
+					$alt_mobile =\Input::get('alt_mobile');
+					$alt_email  =\Input::get('alt_email');
+					$contact =\UserContact::findOrFail($id);
+							$contact->address    = $address;
+							$contact->city       = $city;
+							$contact->state      = $state;
+							$contact->pin        = $pin;
+							$contact->p_address  = $p_address;
+							$contact->p_city     = $p_city;
+							$contact->p_state    = $p_state;
+							$contact->mobile     = $mobile;
+							$contact->phone      = $phone;
+							$contact->alt_mobile = $alt_mobile;
+							$contact->alt_email  = $alt_email;
+					if($contact->save())
+					{
+						\Session::flash('success',"Successfully contact updated");
+						return; 
+					}
+					else
+					{
+						echo "Failed to Update";
+						return;
+					}
+			   }
+			   // Idetification table
+			   if($identval)
+			   {
+			   		$id=$identval;
+			   		$bankId 		=\Input::get('bankId');
+			   		$pan            =\Input::get('pan'); 
+					$passportno     =\Input::get('passportno'); 
+					$adharno        =\Input::get('adharno'); 
+					$voterid        =\Input::get('voterid'); 
+					$dlno           =\Input::get('dlno');
+					$bankaccountno = \Input::get('bankaccountno');
+					$bankname      = \Input::get('bankname');
+					$branchname    = \Input::get('branchname');
+					$IFSC          = \Input::get('IFSC');
+					$micrno        = \Input::get('micrno');
+					$identifcation = \EmpIdentification::findOrFail($id);
+						$identifcation->pan             = $pan;
+						$identifcation->passport_no     = $passportno;
+						$identifcation->adhar_no        = $adharno;
+						$identifcation->voter_id        = $voterid;
+						$identifcation->driving_licence = $dlno;
+					$bank			=\EmpBankDetail::findOrFirst($bankId);
+						$bank->account_no = $bankaccountno;
+						$bank->bank_name  = $bankname;
+						$bank->branch     = $branchname;
+						$bank->IFSC       = $IFSC;
+						$bank->micrno     = $micrno;
+					if($identifcation->save() && $bank->save())
+					{
+						\Session::flash('success',"Identification and bank info successfully updated");
+						return;
+					}
+					else
+					{
+						echo "Failed to update";
+						return;
+					}
+			   }
+			   //PF ESI Details
+			   if($pfval)
+			   {
+			   		$emphaspf     = \Input::get('emphaspf');
+					$pfno 		  = '';
+					$pfenno       = '';
+					$epfno        = '';
+					$relationship = '';
+					if($emphaspf == 'YES')
+					{
+						$pfno         = \Input::get('pfno');
+						$pfenno       = \Input::get('pfenno');
+						$epfno        = \Input::get('epfno');
+						$relationship = \Input::get('relationship');
+					}
+					$emphasesi    = \Input::get('emphasesi');
+					$esino 		  = '';
+					if($emphasesi == 'YES')
+					{
+						$esino     = \Input::get('esino');
+					}
+					$ESIPF 	= \PfEsi::findOrFail($pfval);
+						$ESIPF->isPF         = $emphaspf;
+						$ESIPF->pfno         = $pfno;
+						$ESIPF->pfenno       = $pfenno;
+						$ESIPF->epfno        = $epfno;
+						$ESIPF->relationship = $relationship;
+						$ESIPF->isESI        = $emphasesi;
+						$ESIPF->esino        = $esino;
+					if($ESIPF->save())
+					{
+						\Session::flash('success',"PF and ESI successfully updated");
+						return;
+					}			
+					else
+					{
+						echo "Failed to upload";
+						return;
+					}		
+			   }
+			   // Job details
+			   if($jobval)
+			   {
+			   		$jobjoiningdate     = Implode('-',array_reverse(explode('/',\Input::get('jobjoiningdate'))));
+					$jobtype            = \Input::get('jobtype');
+					$job_designation    = \Input::get('job_designation');
+					$department         = \Input::get('department');
+					$reportingmanager   = \Input::get('reportingmanager');
+					$paymentmode        = \Input::get('paymentmode');
+					$hrverification     = \Input::get('hrverification');
+					$policeverification = \Input::get('policeverification');
+					$emptype            = \Input::get('emptype');
+					$outsourcelist 			= '';
+					if($emptype == 'outsource')
+					{
+						$outsourcelist      = \Input::get('outsourcelist');
+					}
+					$job=\JobDetails::findOrFail($jobval);
+						$job->joining_date        = $jobjoiningdate;
+						$job->job_type            = $jobtype;
+						$job->designation         = $job_designation;
+						$job->department          = $department;
+						$job->reporting_manager   = $reportingmanager;
+						$job->payment_mode        = $paymentmode;
+						$job->hr_verification     = $hrverification;
+						$job->police_verification = $policeverification;
+						$job->emp_type            = $emptype;
+						$job->client_id           = $outsourcelist;
+					if($job->save())
+					{
+						\Session::flash('success',"Job details updated successfully");
+						return;
+					}
+					else
+					{
+						echo "failed to update";
+						return;
+					}
+			   }
+			   // Salary details
+			   if($salval)
+			   {
+			   		$ctc = \Input::get('ctc');
+			   		$salary=\JobDetails::findOrFail($salval);
+			   			$salary->ctc = $ctc;
+			   		if($salary->save())
+			   		{
+			   			\Session::flash('success',"Salary successfully updated");
+			   			return;
+			   		}
+			   		else
+			   		{
+			   			echo "failed to update";
+			   			return;
+			   		}
+
+			   }
+			   //Educational details
+			   if($eduval)
+			   {
+			   		$schoolname        = \Input::get('schoolname');
+					$schoolplace       = \Input::get('schoolplace');
+					$schoolpercentage  = \Input::get('schoolpercentage');
+					$pucname           = \Input::get('pucname');
+					$pucplace          = \Input::get('pucplace');
+					$pucpercentage     = \Input::get('pucpercentage');
+					$diplomaname       = \Input::get('diplomaname');
+					$diplomaplace      = \Input::get('diplomaplace');
+					$diplomapercentage = \Input::get('diplomapercentage');
+					$degreename        = \Input::get('degreename');
+					$degreeplace       = \Input::get('degreeplace');
+					$degreepercentage  = \Input::get('degreepercentage');
+					$mastername        = \Input::get('mastername');
+					$masterplace       = \Input::get('masterplace');
+					$masterpercentage  = \Input::get('masterpercentage');
+					$education =\EmpEducation::findOrFail($eduval);
+						$education->school_name        = $schoolname;
+						$education->school_location    = $schoolplace;
+						$education->school_percentage  = $schoolpercentage;
+						$education->puc_name           = $pucname;
+						$education->puc_location       = $pucplace;
+						$education->puc_percentage     = $pucpercentage;
+						$education->diploma_name       = $diplomaname;
+						$education->diploma_location   = $diplomaplace;
+						$education->diploma_percentage = $diplomapercentage;
+						$education->degree_name        = $degreename;
+						$education->degree_location    = $degreeplace;
+						$education->degree_percentage  = $degreepercentage;
+						$education->master_name        = $mastername;
+						$education->master_location    = $masterplace;
+						$education->master_percentage  = $masterpercentage;	
+					if($education->save())		   
+					{
+						\Session::flash('success',"Educational detail successfully updated");
+						return;
+					}
+					else
+					{
+						echo "Failed to update";
+						return;
+					}
+				}
+				//work experiance
+				if($workExpFrom)
+				{
+					$expId 		 = \Input::get('expId');
+					$companyname = \Input::get('companyname'); 
+					$location    = \Input::get('location'); 
+					$designation = \Input::get('designation'); 
+					$lastctc     = \Input::get('lastctc'); 
+					$joindate    = \Input::get('joindate'); 
+					$leavingdate = \Input::get('leavingdate');
+					$i=0;
+					foreach($expId as $exp)
+					{
+						$experiance = \WorkExperiance::findOrFail($exp);
+							$experiance->company_name = $companyname[$i];
+							$experiance->location     = $location[$i];
+							$experiance->designation  = $designation[$i];
+							$experiance->last_ctc     = $lastctc[$i];
+							$experiance->join_date    = Implode('-',array_reverse(explode('/',$joindate[$i])));
+							$experiance->leaving_date = Implode('-',array_reverse(explode('/',$leavingdate[$i])));
+						$experiance->save();
+						$i++;
+					}
+					\Session::flash('success',"Work experiance successfully updated");
+					return;
+				}
+
+
+
+			}
+
+		
 	}
 
 

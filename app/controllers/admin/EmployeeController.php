@@ -1,5 +1,5 @@
 <?php 
-namespace App\Controller\Client;
+namespace App\Controller\Admin;
 
 class EmployeeController extends ControllerBase {
 
@@ -10,10 +10,9 @@ class EmployeeController extends ControllerBase {
 	 */
 	public function index()
 	{
-		$uId=\Auth::user()->id;
-		$list=\JobDetails::where('client_id','=',$uId)->paginate(20);
-		return \View::make('client/emp.manage_employee')
-					->with('list',$list);
+		$emp=\User::where('profilesId','=',4)->paginate(20);
+		return \View::make('admin/emp.view')
+				->with('list',$emp);
 	}
 
 
@@ -47,17 +46,9 @@ class EmployeeController extends ControllerBase {
 	 */
 	public function show($id)
 	{
-		$uId=\Auth::user()->id;
-		$emp=\JobDetails::where('user_id','=',$id)->where('client_id','=',$uId)->first();
-		if($emp)
-		{
-			return \View::make('client/emp.emp_detail')
-						->with('emp',$emp);
-		}
-		else
-		{
-			return \App::abort(404);
-		}
+		$user=\User::findOrFail($id);
+		return \View::make('admin/emp.view_detail')
+				->with('emp',$user);
 	}
 
 

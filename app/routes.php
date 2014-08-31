@@ -35,17 +35,23 @@ Route::group(array('before'=>'admin','prefix'=>'admin'),function(){
 	Route::controller('user','App\Controller\Admin\UserController');
 	Route::resource('branch','App\Controller\Admin\BranchController');
 	Route::resource('bank','App\Controller\Admin\BankController');
+	Route::resource('dept','App\Controller\Admin\DepartmentController');
+	Route::resource('empe','App\Controller\Admin\EmployeeController');
 });
 // Branch Routes
 Route::group(array('before'=>'branch','prefix'=>'branch'),function(){
-	Route::get('/','App\Controller\Branch\IndexController@getIndex');
+	// Route::get('/',function(){echo 'll';});
 	Route::resource('client','App\Controller\Branch\ClientController');
 	Route::resource('employee','App\Controller\Branch\EmployeeController');
 });
 // Client Routes
 Route::group(array('before'=>'client','prefix'=>$profile),function(){
-	Route::get('/','App\Controller\Client\IndexController@getIndex');
-	Route::resource('emp','App\Controller\Client\EmployeeController');
+	// Route::get('/','App\Controller\Client\IndexController@getIndex');
+	Route::resource('emps','App\Controller\Client\EmployeeController');
+});
+// Employee Routes
+Route::group(array('before'=>'employee','prefix'=>$profile),function(){
+	Route::resource('emp','App\Controller\Emp\IndexController');
 });
 // Authentication Routes
 Route::group(array('before'=>'auth','prefix'=>$profile),function(){

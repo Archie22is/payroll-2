@@ -4,6 +4,7 @@ class IndexController extends ControllerBase
 {
 	public function getIndex()
 	{
-		return \View::make('index.index');
+		// return \View::make('index.index');
+		echo 'll';
 	}
 }

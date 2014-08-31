@@ -114,6 +114,7 @@ class BranchController extends ControllerBase
 		$branch=\Branch::where('id','=',$id)->with('contact')->firstOrFail();
 		return \View::make('admin/branch.edit')->with('branch',$branch);
 	}
+	
 	/**
 	 * Update the specified resource in storage.
 	 *
@@ -122,43 +123,58 @@ class BranchController extends ControllerBase
 	 */
 	public function update($id)
 	{
-		\DB::beginTransaction();
-		$branch=\Branch::where('id','=',$id)->firstOrFail();
-		$contact=\BranchContact::where('branch_id','=',$id)->firstOrFail();
-		$branch->branch_name          = \Input::get('branch_name');
-		$branch->branch_code          = \Input::get('branch_code');
-		$branch->branch_address       = \Input::get('branch_address');
-		$branch->branch_city          = \Input::get('branch_city');
-		$branch->branch_state         = \Input::get('branch_state');
-		$branch->branch_pin           = \Input::get('branch_pin');
-		$branch->branch_land_line     = \Input::get('branch_land_line');
-		$branch->branch_alt_land_line = \Input::get('branch_alt_land_line');
-		$branch->branch_fax           = \Input::get('branch_fax');
-		if(!$branch->save())
+		
+		$branch=\Input::get('branch_id');
+		$contact=\Input::get('contact_id');
+		if($branch)
 		{
-			\DB::rollback();
-			return \Redirect::back()->with('error','Failed to update');
+			$updateBranch 						= \Branch::findOrFail($branch);
+			$updateBranch->branch_name          = \Input::get('branch_name');
+			$updateBranch->branch_code          = \Input::get('branch_code');
+			$updateBranch->branch_address       = \Input::get('branch_address');
+			$updateBranch->branch_city          = \Input::get('branch_city');
+			$updateBranch->branch_state         = \Input::get('branch_state');
+			$updateBranch->branch_pin           = \Input::get('branch_pin');
+			$updateBranch->branch_land_line     = \Input::get('branch_land_line');
+			$updateBranch->branch_alt_land_line = \Input::get('branch_alt_land_line');
+			$updateBranch->branch_fax           = \Input::get('branch_fax');
+			if($updateBranch->save())
+			{
+				echo "Branch information successfully updated";
+				return;
+			}
+			else
+			{
+				echo "Failed to update";
+				return;
+			}
 		}
-		$contact->branch_head      = \input::get('branch_head');
-		$contact->p_mobile_no      = \input::get('p_mobile_no');
-		$contact->p_alt_mobile_no  = \input::get('p_alt_mobile_no');
-		$contact->p_email          = \input::get('p_email');
-		$contact->p_alt_email      = \input::get('p_alt_email');
-		$contact->s_contact_person = \input::get('s_contact_person');
-		$contact->s_mobile_no      = \input::get('s_mobile_no');
-		$contact->s_alt_mobile_no  = \input::get('s_alt_mobile_no');
-		$contact->s_email          = \input::get('s_email');
-		$contact->s_alt_email      = \input::get('s_alt_email');
-		if(!$contact->save())
+		if($contact)
 		{
-			\DB::rollback();
-			return \Redirect::back()->with('error','Failed to update');
+			$updateContact 					 = \BranchContact::findOrFail($contact);
+			$updateContact->branch_head      = \Input::get('branch_head');
+			$updateContact->p_mobile_no      = \Input::get('p_mobile_no');
+			$updateContact->p_alt_mobile_no  = \Input::get('p_alt_mobile_no');
+			$updateContact->p_email          = \Input::get('p_email');
+			$updateContact->p_alt_email      = \Input::get('p_alt_email');
+			$updateContact->s_contact_person = \Input::get('s_contact_person');
+			$updateContact->s_mobile_no      = \Input::get('s_mobile_no');
+			$updateContact->s_alt_mobile_no  = \Input::get('s_alt_mobile_no');
+			$updateContact->s_email          = \Input::get('s_email');
+			$updateContact->s_alt_email      = \Input::get('s_alt_email');
+			if($updateContact->save())
+			{
+				echo " Contact Successfully updated";
+				return;
+			}
+			else
+			{
+				echo "Failed to update";
+				return;
+			}
+
 		}
-		else
-		{
-			\DB::commit();
-			return \Redirect::route('admin.branch.index')->with('success','Successfully Updated');
-		}
+
 	}
 	/**
 	 * Remove the specified resource from storage.

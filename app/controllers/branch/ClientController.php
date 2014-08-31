@@ -150,7 +150,7 @@ class ClientController extends ControllerBase {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update3($id)
 	{
 		// Transaction begins here
 		\DB::beginTransaction();
@@ -214,7 +214,55 @@ class ClientController extends ControllerBase {
 		}
 
 	}
-
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update($id)
+	{
+		
+		$company=\Input::get('company_id');
+		$contact=\Input::get('contact_id');
+		if($company)
+		{
+			$updateCompany= \Company::findOrFail($company);
+			$updateCompany->company_name          = \Input::get('company_name');
+			$updateCompany->company_address       = \Input::get('company_address');
+			$updateCompany->company_city          = \Input::get('company_city');
+			$updateCompany->company_state         = \Input::get('company_state');
+			$updateCompany->company_pin           = \Input::get('company_pin');
+			$updateCompany->company_phone     	  = \Input::get('company_land_line');
+			$updateCompany->company_alt_phone 	  = \Input::get('company_alt_land_line');
+			$updateCompany->company_fax           = \Input::get('company_fax');
+			$updateCompany->company_website       = \Input::get('company_website');
+			if($updateCompany->save())
+			{
+				\Session::flash('success','Successfully updated');
+				return;
+			}
+		}
+		if($contact)
+		{
+			$uId 			   = \Input::get('user_id');
+			$displayname       = \Input::get('displayname');
+			// user display name update
+			$user              = \User::findorFail($uId);
+			$user->displayname = $displayname;
+			// user contact
+			//user contact detail
+			$updateContact             = \UserContact::findOrFail($contact);
+			$updateContact->mobile     = \Input::get('mobile');
+			$updateContact->alt_mobile = \Input::get('alt_mobile');
+			$updateContact->alt_email  = \Input::get('alt_email');
+			if($updateContact->save() && $user->save())
+			{
+				\Session::flash('success','Successfully updated');
+				return;
+			}
+		}
+	}
 
 	/**
 	 * Remove the specified resource from storage.

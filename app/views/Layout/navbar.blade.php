@@ -95,7 +95,7 @@
 						<a href="#" data-toggle="dropdown" id="profile">
 							
 							@if(Auth::user()->contact)
-							{{ HTML::image('public/img/'.Auth::user()->contact->image,'',array('class'=>"img-responsive img-circle"))}}
+							{{ HTML::image('public/img/'.Auth::user()->contact->image,'',array('class'=>"img-circle img-responsive"))}}
 							@else
 							<i class="fa fa-user"></i>
 							@endif
@@ -107,7 +107,7 @@
 						<!-- dropdown -->
 						<ul class="dropdown-menu" aria-labelledby="profile">
 							<li><a href="<?php echo URL::to(Auth::getProfile().'/users').'/'.Auth::user()->id; ?>">View/Edit Profile</a></li>
-							<li><a href="#">Change Settings</a></li>
+							<li><a href="<?php echo URL::to(Auth::getProfile().'/users').'/'.Auth::user()->id.'/edit'; ?>">Change Password</a></li>
 							<li><a href="<?php echo URL::to('account/sign-out') ?>">Sign Out</a></li>
 						</ul><!-- end dropdown-menu -->
 					</div><!-- end head-user dropdown -->

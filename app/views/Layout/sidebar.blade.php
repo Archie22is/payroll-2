@@ -28,10 +28,12 @@
 						<ul class="list-unstyled">
 							<li><a href="<?php echo URL::to('admin/user/create'); ?>"><i class="fa fa-file"></i>CompanyInformation</a></li>
 							<li><a href="<?php echo URL::to('admin/user/labour-law-information'); ?>"><i class="fa fa-file"></i>Labour Law Information</a></li>
-							<li><a href="<?php echo URL::to('admin/bank'); ?>"><i class="fa fa-file"></i>Manage Bank</a></li>
+							<li><a href="<?php echo URL::to('admin/bank'); ?>"><i class="fa fa-money"></i>Manage Bank</a></li>
 						</ul><!-- submenu ends here -->
 					</li><!-- Company profile ends -->
+					<li><a href="<?php echo URL::to('admin/dept'); ?>"><i class="fa fa-user"></i>Manage Department</a></li><!-- manage manager -->
 					<li><a href="<?php echo URL::to('admin/branch'); ?>"><i class="fa fa-user"></i>Manage Branch</a></li><!-- manage manager -->
+					<li><a href="<?php echo URL::route('admin.empe.index'); ?>"><i class="fa fa-user"></i>Manage Employee</a></li>
 				</ul><!-- list-unstyled -->
 				<!-- Admin Part ended -->
 				@elseif(Auth::getProfile() == 'branch')
@@ -50,10 +52,20 @@
 					<!-- Dashboard -->
 					<li><a href=""><i class="fa fa-desktop"></i>Dashboard</a></li>
 					<!-- manage Employee  -->
-					<li><a href="{{url('client/emp')}}"><i class="fa fa-file"></i>Manage Employee</a></li> 
+					<li><a href="{{url('client/emps')}}"><i class="fa fa-file"></i>Manage Employee</a></li> 
 
 				</ul>
 				<!-- End Client Sidebar -->
+				@elseif(Auth::getProfile() == 'employee')
+				<!-- employee part -->
+				<ul class="list-unstyled">
+					<!-- Dashboard -->
+					<li><a href=""><i class="fa fa-desktop"></i>Dashboard</a></li>
+					<!-- manage Employee  -->
+					<li><a href="{{url('employee/emp')}}"><i class="fa fa-file"></i>About Me</a></li> 
+
+				</ul>
+				<!-- End Employee Sidebar -->
 				@endif
 				@endif
 			</div><!-- end side-nav-block -->

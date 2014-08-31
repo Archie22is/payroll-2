@@ -23,7 +23,7 @@
 						<li><a href="#salarytab" class="br-blue" data-toggle="tab"><i class="fa fa-book lblue"></i> Salary</a></li>
 						<li><a href="#educationtab" class="br-blue" data-toggle="tab"><i class="fa fa-book lblue"></i>Education Info</a></li>
 						<li><a href="#workexptab" class="br-blue" data-toggle="tab"><i class="fa fa-book lblue"></i>Work Experiance</a></li>
-						<li><a href="#doctab" class="br-blue" data-toggle="tab"><i class="fa fa-book lblue"></i>Documents</a></li>
+						<li style="display:none"><a href="#doctab" class="br-blue" data-toggle="tab"><i class="fa fa-book lblue"></i>Documents</a></li>
 
 					</ul><!-- end nav nav-tabs -->
 					<!-- Tab Panes -->
@@ -31,8 +31,10 @@
 		
 						<!-- Personal information -->
 						<div class="tab-pane fade active in" id="personalInfo">
-						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'personalFrom'))}}
-						<h4>Personal Info</h4>
+						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'personalFrom','enctype'=>'multipart/form-data'))}}
+						<input type="hidden" name="personalFrom" value="1">
+						<input type="hidden" name="personalval" value="{{$emp->employee->id}}" id="personalval">
+						<h4>Personal Info  <small style="float:right"><a href="javascript:void(0);"  class="label label-danger"  onclick="var fId=$('#personalval').val();var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="firstname">FirstName</label>
 								<div class="col-lg-5">
@@ -69,7 +71,7 @@
 								<div class="col-lg-5">
 									<select name="maritialstatus" id="maritialstatus" onchange="var val = $(this).val(); if(val == 'married'){ $('#spouseInput').show();}else{ $('#spouseInput').hide(); }" class="form-control col-lg-12">
 										<option value="">Select</option>
-										<option value="single" @if($emp->employee->maritialstatus == 'single')selected @endif >Single</option>
+										<option value="single" @if($emp->employee->maritialstatus == 'single') selected @endif >Single</option>
 										<option value="married" @if($emp->employee->maritialstatus == 'married') selected @endif>Married</option>
 										<option value="divorced"@if($emp->employee->maritialstatus == 'divorced')selected @endif>Divorced</option>
 									</select>
@@ -113,20 +115,33 @@
 									</select>
 								</div><!-- input company_name -->
 							</div><!-- end form-group -->
+							{{Form::close()}}
+							{{Form::open(array('id'=>'imageForm','class'=>'form-horizontal','enctype'=>'multipart/form-data','style'=>'display:none'))}}
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="image">Photo</label>
 								<div class="col-lg-5">
-									<input type="file" name="image" id="image" onchange="var g=docvalidation($(this).val()); if(g){ alert(g); $(this).val('');$('#rmphoto').hide();$('#armphoto').hide();}else{ $('#rmphoto').text($(this).val());$('#rmphoto').show();$('#armphoto').show();}">
+									<input type="hidden" name="form_id" value="{{$emp->employee->id}}">
+									<input style="display" type="file" name="image" id="image">
 									<span id="rmphoto" style='display:none'></span><a href='javascript:void(0);' style='color:red;display:none' id="armphoto" onclick="$('#image').val('');$('#rmphoto').hide();$(this).hide();"><i class='fa fa-minus-circle'></i></a>
-									{{HTML::image('public/img/emp/photo/'.$emp->employee->image,'',array('style'=>'width:100px;height:50px'))}}
+									<span class="image">
+									{{HTML::image('public/img/emp/photo/'.$emp->employee->image,'',array('style'=>'width:100px;height:50px;'))}} 
+									@if($emp->employee->image)
+									<a href="javascript:void(0);" style="color:red" onclick="return changeImage()" id="imageDel"><i class="fa fa-times-circle-o fa-2x"></i></a> 
+									@else
+									<a href="javascript:void(0);" style="color:green" onclick="changeImage()" id="imageAdd"><i class="fa fa-plus-circle fa-2x"></i></a>	
+									@endif
+									</span>
+									
 								</div><!-- input company_name -->
 							</div><!-- end form-group -->
+							{{Form::close()}}
+							{{Form::open(array('id'=>'signForm','class'=>'form-horizontal','style'=>'display:none'))}}
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="signature">Signature</label>
 								<div class="col-lg-5">
-									<input type="file" name="signature" id="signature" class="image" onchange="var g=docvalidation($(this).val()); if(g){ alert(g); $(this).val('');$('#rmsign').hide();$('#armsign').hide();}else{ $('#rmsign').text($(this).val());$('#rmsign').show();$('#armsign').show();}" >
+									<input style="display:none" type="file" name="signature" id="signature" class="image" onchange="var g=docvalidation($(this).val()); if(g){ alert(g); $(this).val('');$('#rmsign').hide();$('#armsign').hide();}else{ $('#rmsign').text($(this).val());$('#rmsign').show();$('#armsign').show();}" >
 									<span id="rmsign" style='display:none'></span><a href='javascript:void(0);' style='color:red;display:none' id="armsign" onclick="$('#signature').val('');$('#rmsign').hide();$(this).hide();"><i class='fa fa-minus-circle'></i></a>
-									{{HTML::image('public/img/emp/sign/'.$emp->employee->signature,'',array('style'=>'width:100px;height:50px'))}}
+									{{HTML::image('public/img/emp/sign/'.$emp->employee->signature,'',array('style'=>'width:100px;height:50px'))}}<a href="javascript:void(0);" style="color:red"><i class="fa fa-times-circle-o fa-2x"></i></a><a href="javascript:void(0);" style="color:green"><i class="fa fa-plus-circle fa-2x"></i></a>
 								</div><!-- input company_name -->
 							</div><!-- end form-group -->
 							{{Form::close()}}
@@ -137,7 +152,9 @@
 						<!-- start contact info -->
 						<div class="tab-pane fade" id="contacttab">
 						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'contactFrom'))}}
-						<h4>Contact Info</h4>
+						<input type="hidden" name="contactFrom" value="1">
+						<input type="hidden" name="contactval" id="contactval" value="{{$emp->contact->id}}">
+						<h4>Contact Info <small style="float:right"><a href="javascript:void(0);"  class="label label-danger" onclick="var fId=$('#contactval').val();var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="address">Present Address</label>
 								<div class="col-lg-5">
@@ -222,8 +239,10 @@
 						
 					
 						<div class="tab-pane fade" id="idetificationtab">
-						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'contactFrom'))}}
-						<h4>Identification And Bank Detail</h4>
+						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'identificationFrom'))}}
+						<input type="hidden" name="identificationFrom" value="1">
+						<input type="hidden" name="identval" id="identval" value="{{$emp->empIdentity->id}}">
+						<h4>Identification And Bank Detail <small style="float:right"><a href="javascript:void(0);"  class="label label-danger" onclick="var fId=$('#identval').val();var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="pan">PAN</label>
 								<div class="col-lg-5">
@@ -254,6 +273,7 @@
 									<input type="text" name="dlno" value="{{$emp->empIdentity->driving_licence or ''}}" id="dlno" placeholder="Driving Licence No" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
+							<input type="hidden" name="bankId" value="{{$emp->empBankDetail->id}}">		
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="bankaccountno">Bank Account No</label>
 								<div class="col-lg-5">
@@ -290,14 +310,16 @@
 						<!-- start PF and ESI -->
 						<div class="tab-pane fade" id="pfesitab">
 						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'pfesiForm'))}}
+						<input type="hidden" name="pfesiForm" value="1">
+						<input type="hidden" name="pfval" id="pfval" value="{{$emp->empPfEsi->id}}">
 						<!-- PF Eligibilty javascript -->
-						<h4>PF and ESI Detail</h4>
+						<h4>PF and ESI Detail <small style="float:right"><a href="javascript:void(0);"  class="label label-danger" onclick="var fId=$('#pfval').val();var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 							<div class="form-group">
 								<label for="emphaspf" class="col-lg-2 control-label">Employee has PF</label>
 								<div class="col-lg-5">
 									<select name="emphaspf"  class="form-control col-lg-12" id="emphaspf" onchange="var sh= $(this).val(); if(sh == 'YES'){ $('.empYes').show(); } else{ $('.empYes').hide(); }">
-										<option value="YES" @if($emp->empPfEsi->isPF == 'YES')selected @endif>Yes</option>
-										<option value="NO" @if($emp->empPfEsi->isPF == 'NO')selected @endif>No</option>
+										<option value="YES" @if($emp->empPfEsi->isPF == 'YES') selected @endif>Yes</option>
+										<option value="NO" @if($emp->empPfEsi->isPF == 'NO') selected @endif>No</option>
 									</select>
 								</div>
 							</div><!-- end form-group -->
@@ -308,19 +330,19 @@
 										<input type="text" name="pfno" value="{{$emp->empPfEsi->pfno or ''}}" id="pfno" placeholder="PF No" class="form-control required">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
-								<div class="form-group empYes">
+								<div class="form-group empYes" @if($emp->empPfEsi->isPF == 'NO')style="display:none" @endif>
 									<label class="col-lg-2 control-label" for="pfenno">PF Enrollment No</label>
 									<div class="col-lg-5">
 										<input type="text" name="pfenno" value="{{$emp->empPfEsi->pfenno or ''}}" id="pfenno" placeholder="PF Enrollment No" class="form-control required">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
-								<div class="form-group empYes">
+								<div class="form-group empYes" @if($emp->empPfEsi->isPF == 'NO')style="display:none" @endif>
 									<label class="col-lg-2 control-label" for="epfno">EPF No</label>
 									<div class="col-lg-5">
 										<input type="text" name="epfno" value="{{$emp->empPfEsi->epfno or ''}}" id="epfno" placeholder="EPF No" class="form-control required">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
-								<div class="form-group empYes">
+								<div class="form-group empYes" @if($emp->empPfEsi->isPF == 'NO')style="display:none" @endif>
 									<label class="col-lg-2 control-label" for="relationship">Relationship to be specified</label>
 									<div class="col-lg-5">
 										<input type="text" name="relationship" value="{{$emp->empPfEsi->relationship or ''}}" id="relationship" placeholder="Relationship to be specified" class="form-control required">
@@ -330,8 +352,8 @@
 								<label for="emphasesi" class="control-label col-lg-2">Employee has ESI</label>
 								<div class="col-lg-5">
 									<select name="emphasesi"  id="emphasesi" class=" form-control col-lg-12" onchange="var sh= $(this).val(); if(sh == 'YES'){ $('.empeYes').show(); } else{ $('.empeYes').hide(); }">
-										<option value="YES"@if($emp->empPfEsi->isESI == 'YES')selected @endif>Yes</option>
-										<option value="NO" @if($emp->empPfEsi->isESI == 'NO')selected @endif>No</option>
+										<option value="YES"@if($emp->empPfEsi->isESI == 'YES') selected @endif>Yes</option>
+										<option value="NO" @if($emp->empPfEsi->isESI == 'NO') selected @endif>No</option>
 									</select>
 								</div><!-- end select -->
 							</div><!-- end form-group -->
@@ -348,7 +370,9 @@
 						<!-- start job details -->
 						<div class="tab-pane fade" id="jobtab">
 						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'jobFrom'))}}
-						<h4>Job Details</h4>
+						<input type="hidden" name="jobFrom" value="1">
+						<input type="hidden" name="jobval" id="jobval" value="{{$emp->empJobDetail->id}}">
+						<h4>Job Details <small style="float:right"><a href="javascript:void(0);"  class="label label-danger" onclick="var fId=$('#jobval').val();var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 							<div class="form-group">
 								<label for="jobjoiningdate" class="col-lg-2 control-label">Joining Date</label>
 								<div class="col-lg-5">
@@ -359,10 +383,10 @@
 								<label for="jobtype" class="control-label col-lg-2">Job Type</label>
 								<div class="col-lg-5">
 									<select name="jobtype" id="jobtype" class="form-control col-lg-12">
-										<option value="parmanent" @if($emp->empJobDetail->jobtype == 'parmanent')selected@endif>Permanent</option>
-										<option value="probation">Probation</option>
-										<option value="contract">Contract</option>
-										<option value="consultant">Consultant</option>
+										<option value="parmanent" @if($emp->empJobDetail->job_type == 'parmanent') selected @endif>Permanent</option>
+										<option value="probation" @if($emp->empJobDetail->job_type == 'probation') selected @endif>Probation</option>
+										<option value="contract" @if($emp->empJobDetail->job_type == 'contract') selected @endif>Contract</option>
+										<option value="consultant" @if($emp->empJobDetail->job_type == 'consultant') selected @endif>Consultant</option>
 									</select>
 								</div><!-- end select -->
 							</div><!-- end form-group -->
@@ -376,10 +400,9 @@
 								<label for="department" class="control-label col-lg-2">Department</label>
 								<div class="col-lg-5">
 									<select name="department" id="department" class="form-control col-lg-12">
-										<option value="parmanent" @if($emp->empJobDetail->department == 'parmanent')selected @endif>Permanent</option>
-										<option value="probation">Probation</option>
-										<option value="contract">Contract</option>
-										<option value="consultant">Consultant</option>
+										@forelse($dept as $depts)
+										<option value="{{$depts->id}}" @if($emp->empJobDetail->department == $depts->id) selected @endif>{{$depts->name}}</option>
+										@endforeach
 									</select>
 								</div><!-- end select -->
 							</div><!-- end form-group -->
@@ -393,9 +416,9 @@
 								<label for="paymentmode" class="control-label col-lg-2">Payment Mode</label>
 								<div class="col-lg-5">
 									<select name="paymentmode" id="paymentmode" class="form-control col-lg-12">
-										<option value="banktransfer" @if($emp->empJobDetail->payment_mode == 'banktransfer')selected @endif>Bank Transfer</option>
+										<option value="banktransfer"  @if($emp->empJobDetail->payment_mode == 'banktransfer')selected @endif>Bank Transfer</option>
 										<option value="cash" @if($emp->empJobDetail->payment_mode == 'cash')selected @endif>Cash</option>
-										<option value="cheque" @if($emp->empJobDetail->payment_mode == 'cheque')selected @endif>Cheque</option>
+										<option value="cheque"  @if($emp->empJobDetail->payment_mode == 'cheque')selected @endif>Cheque</option>
 									</select>
 								</div><!-- end select -->
 							</div><!-- end form-group -->
@@ -427,14 +450,14 @@
 								</div><!-- end select -->
 							</div><!-- end form-group -->
 							<!-- only if out-source -->
-							<div class="form-group" id="outsource" style="display:none">
+							<div class="form-group" id="outsource" @if($emp->empJobDetail->emp_type == 'inhouse')style="display:none" @endif>
 								<label for="outsourcelist" class="control-label col-lg-2">Out Sources</label>
 								<div class="col-lg-5">
 									<select name="outsourcelist" id="outsourcelist" class="form-control col-lg-12">
 										@forelse($client as $clients)
 											@if($clients->user)
 												@if($clients->user->company)
-											<option value="{{$clients->user->id}}">{{$clients->user->company->company_name}}</option>
+											<option value="{{$clients->user->id}}" @if($emp->empJobDetail->client_id == $clients->user->id) selected @endif>{{$clients->user->company->company_name}}</option>
 												@endif
 											@endif
 										@endforeach
@@ -447,12 +470,14 @@
 						<!-- End Job details -->
 						<!-- start Salary -->
 						<div class="tab-pane fade" id="salarytab">
-						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'salaryFormFrom'))}}
-						<h4>Salary Detail</h4>
+						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'salaryForm'))}}
+						<input type="hidden" name="salaryForm" value="1">
+						<input type="hidden" name="salval" id="salval" value="{{$emp->empJobDetail->id}}">
+						<h4>Salary Detail <small style="float:right"><a href="javascript:void(0);"  class="label label-danger" onclick="var fId=$('#salval').val();var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="ctc">CTC(Annual)</label>
 									<div class="col-lg-5">
-										<input type="text" name="ctc" id="ctc" placeholder="CTC(Annual)" class="form-control required">
+										<input type="text" name="ctc" value="{{$emp->empJobDetail->ctc or ''}}" id="ctc" placeholder="CTC(Annual)" class="form-control required">
 									</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							{{Form::close()}}
@@ -461,100 +486,102 @@
 						<!-- start Education Background -->
 						<div class="tab-pane fade" id="educationtab">
 						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'educationFrom'))}}
-						<h4>Education Background</h4>
+						<input type="hidden" name="educationFrom" value="1">
+						<input type="hidden" name="eduval" id="eduval" value="{{$emp->empEducation->id}}">
+						<h4>Education Background <small style="float:right"><a href="javascript:void(0);"  class="label label-danger" onclick="var fId=$('#eduval').val();var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 							<u>SSLC</u>
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="schoolname">SchoolName</label>
 								<div class="col-lg-5">
-									<input type="text" name="schoolname" id="schoolname" placeholder="SchoolName" class="form-control required">
+									<input type="text" name="schoolname" value="{{$emp->empEducation->school_name or ''}}" id="schoolname" placeholder="SchoolName" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="schoolplace">School Place</label>
 								<div class="col-lg-5">
-									<input type="text" name="schoolplace" id="schoolplace" placeholder="School Place" class="form-control required">
+									<input type="text" name="schoolplace" value="{{$emp->empEducation->school_location or ''}}" id="schoolplace" placeholder="School Place" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="schoolpercentage">Percentage</label>
 								<div class="col-lg-5">
-									<input type="text" name="schoolpercentage" id="schoolpercentage" placeholder="Percentage" class="form-control required">
+									<input type="text" name="schoolpercentage" value="{{$emp->empEducation->school_percentage or ''}}" id="schoolpercentage" placeholder="Percentage" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<u>PUC</u>
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="pucname">Institution Name</label>
 								<div class="col-lg-5">
-									<input type="text" name="pucname" id="pucname" placeholder="Institution Name" class="form-control required">
+									<input type="text" name="pucname" value="{{$emp->empEducation->puc_name or ''}}" id="pucname" placeholder="Institution Name" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="pucplace">Place</label>
 								<div class="col-lg-5">
-									<input type="text" name="pucplace" id="pucplace" placeholder="Place" class="form-control required">
+									<input type="text" name="pucplace" value="{{$emp->empEducation->puc_location or ''}}" id="pucplace" placeholder="Place" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="pucpercentage">Percentage</label>
 								<div class="col-lg-5">
-									<input type="text" name="pucpercentage" id="pucpercentage" placeholder="Percentage" class="form-control required">
+									<input type="text" name="pucpercentage" value="{{$emp->empEducation->puc_percentage or ''}}" id="pucpercentage" placeholder="Percentage" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<u>Diploma</u>
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="diplomaname">Institution Name</label>
 								<div class="col-lg-5">
-									<input type="text" name="diplomaname" id="diplomaname" placeholder="Institution Name" class="form-control required">
+									<input type="text" name="diplomaname" value="{{$emp->empEducation->diploma_name or ''}}" id="diplomaname" placeholder="Institution Name" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="diplomaplace">Place</label>
 								<div class="col-lg-5">
-									<input type="text" name="diplomaplace" id="diplomaplace" placeholder="Place" class="form-control required">
+									<input type="text" name="diplomaplace" value="{{$emp->empEducation->diploma_location or ''}}" id="diplomaplace" placeholder="Place" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="diplomapercentage">Percentage</label>
 								<div class="col-lg-5">
-									<input type="text" name="diplomapercentage" id="diplomapercentage" placeholder="Percentage" class="form-control required">
+									<input type="text" name="diplomapercentage" value="{{$emp->empEducation->diploma_percentage or ''}}" id="diplomapercentage" placeholder="Percentage" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<u>Bachelor's Degree</u>
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="degreename">Institution Name</label>
 								<div class="col-lg-5">
-									<input type="text" name="degreename" id="degreename" placeholder="Institution Name" class="form-control required">
+									<input type="text" name="degreename" value="{{$emp->empEducation->degree_name or ''}}" id="degreename" placeholder="Institution Name" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="degreeplace">Place</label>
 								<div class="col-lg-5">
-									<input type="text" name="degreeplace" id="degreeplace" placeholder="Place" class="form-control required">
+									<input type="text" name="degreeplace" value="{{$emp->empEducation->degree_location or ''}}" id="degreeplace" placeholder="Place" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="degreepercentage">Percentage</label>
 								<div class="col-lg-5">
-									<input type="text" name="degreepercentage" id="degreepercentage" placeholder="Percentage" class="form-control required">
+									<input type="text" name="degreepercentage" value="{{$emp->empEducation->degree_percentage or ''}}" id="degreepercentage" placeholder="Percentage" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<u>Master Degree</u>
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="mastername">Institution Name</label>
 								<div class="col-lg-5">
-									<input type="text" name="mastername" id="mastername" placeholder="Institution Name" class="form-control required">
+									<input type="text" name="mastername" value="{{$emp->empEducation->master_name or ''}}" id="mastername" placeholder="Institution Name" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="masterplace">Place</label>
 								<div class="col-lg-5">
-									<input type="text" name="masterplace" id="masterplace" placeholder="Place" class="form-control required">
+									<input type="text" name="masterplace" value="{{$emp->empEducation->master_location or ''}}" id="masterplace" placeholder="Place" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="masterpercentage">Percentage</label>
 								<div class="col-lg-5">
-									<input type="text" name="masterpercentage" id="masterpercentage" placeholder="Percentage" class="form-control required">
+									<input type="text" name="masterpercentage" value="{{$emp->empEducation->master_percentage or ''}}" id="masterpercentage" placeholder="Percentage" class="form-control required">
 								</div><!-- end input-form  -->
 							</div><!-- end form-group -->
 							{{Form::close()}}
@@ -563,59 +590,76 @@
 						<!-- Start Education background -->
 						<div class="tab-pane fade" id="workexptab">
 						{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'workExpFrom'))}}
-						<h4>Work Experiance</h4>
-							<span class="pull-right">Add more company?<a href="javascript:void(0)" style="color:blue" id="addCompany">click here</a><span class="loader" style="display:none;" class="center"><b>loading........</b></span></span>
+						<input type="hidden" name="workExpFrom" value="1">
+						<!-- <input type="hidden" name="expval" id="expval" value=""> -->
+						<h4>Work Experiance <small style="float:right"><a href="javascript:void(0);"  class="label label-danger" onclick="var fId=1;var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
+							<span class="pull-right">Add more company?<a href="javascript:void(0)" style="color:blue" id="addCompany">click here</a><span class="loader" style="display:none;" class="center"><b><i class="fa fa-spinner fa-spin fa-2x"></i></b></span></span>
+													
 							<div id="workexpappend">
+							<?php $i=0; ?>
+							@forelse($emp->empWorkExperiance as $workExp)
+								<input type="hidden" name="expId[]" value="{{$workExp->id}}">
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="companyname">Company Name</label>
 									<div class="col-lg-5">
-										<input type="text" name="companyname[]" placeholder="Company Name" class="form-control required">
+										<input type="text" name="companyname[]" value="{{$workExp->company_name or ''}}" placeholder="Company Name" class="form-control required">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="location">Location</label>
 									<div class="col-lg-5">
-										<input type="text" name="location[]" placeholder="Location" class="form-control required">
+										<input type="text" name="location[]" value="{{$workExp->location or ''}}" placeholder="Location" class="form-control required">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="designation">Designation</label>
 									<div class="col-lg-5">
-										<input type="text" name="designation[]" placeholder="Designation" class="form-control required">
+										<input type="text" name="designation[]" value="{{$workExp->designation or ''}}" placeholder="Designation" class="form-control required">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="lastctc">Last CTC</label>
 									<div class="col-lg-5">
-										<input type="text" name="lastctc[]" placeholder="Last CTC" class="form-control required">
+										<input type="text" name="lastctc[]" value="{{$workExp->last_ctc or ''}}" placeholder="Last CTC" class="form-control required">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="joindate">Join Date</label>
 									<div class="col-lg-5">
-										<input type="text" name="joindate[]" placeholder="dd/mm/yyyy" class="date form-control required">
+										<input type="text" name="joindate[]" value="{{Implode('/',array_reverse(explode('-',$workExp->join_date)))}}" placeholder="dd/mm/yyyy" class="date form-control required">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="leavingdate">Leaving Date</label>
 									<div class="col-lg-5">
-										<input type="text" name="leavingdate[]" placeholder="dd/mm/yyyy" class="date form-control required">
+										<input type="text" name="leavingdate[]" value="{{Implode('/',array_reverse(explode('-',$workExp->leaving_date))) }}" placeholder="dd/mm/yyyy" class="date form-control required">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
+								<?php $i++; ?>
+								@if(isset($emp->empWorkExperiance[$i]))
+								<hr>
+								@endif
+								@endforeach
 							</div><!-- end worexpappend -->
+							
+							
 								{{Form::close()}}
 							</div><!-- end tab-pane -->
 							<!-- End Work Experience -->
 							<!-- Start Document -->
 							<div class="tab-pane fade" id="doctab">
 							{{Form::open(array('route'=>array('branch.employee.update',2),'method'=>'put','class'=>'form-horizontal','id'=>'docFrom'))}}
-							<h4>Document detail</h4>
+							<input type="hidden" name="docFrom" value="1">
+							<!-- <input type="hidden" name="val" value=""> -->
+							<h4>Document detail <small style="float:right"><a href="javascript:void(0);"  class="label label-danger" onclick="var fId=2;var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 								<p class="pull-right">Add more document ?<a href="javascript:void(0);" id="addDoc" style="color:blue">Click Here</a> <span class="loader" style="display:none;" class="center"><b>loading........</b></span></p>
 							<div id="docappend">	
+								<?php $i=0; ?>
+								@forelse($emp->empDocument as $doc)
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="docname[]">Document Name</label>
 									<div class="col-lg-5">
-										<input type="text" name="docname[]" id="docname[]" placeholder="Document Name" class="form-control required">
+										<input type="text" name="docname[]" value="{{$doc->doc_name or ''}}" id="docname[]" placeholder="Document Name" class="form-control required">
 									</div><!-- input firstname -->
 								</div><!-- end form-group -->
 								<div class="form-group">
@@ -625,7 +669,13 @@
 											<input type="file" name="doc[]"  onchange="var g=docvalidation($(this).val()); if(g){ alert(g); $(this).val('');};">
 											
 										</div><!-- end input-form  -->
+										{{ HTML::image('public/img/emp/doc/'.$doc->document,'',array('style'=>"width:100px;height:50px"))}}
 								</div><!-- end form-group -->
+								<?php $i++ ?>
+								@if(isset($emp->empDocument[$i]))
+								<hr>
+								@endif
+								@endforeach
 							</div><!-- end docappend -->
 								{{Form::close()}}
 							</div><!-- end tab-pane -->
@@ -641,64 +691,5 @@
 @section('script')
 {{HTML::style('public/css/jquery-ui-1.10.4.custom.min.css')}}
 {{HTML::script('public/js/jquery-ui-1.10.4.custom.min.js')}}
-<script>
-	function docvalidation(data)
-	{
-		var filename=data;
-		var indexno= filename.lastIndexOf('.');
-		var ext    = filename.substr(indexno+1);
-		var valid=('jpg|JPG|png|PNG|gif|GIF');
-		
-		if(!ext.match(valid))
-		{
-			return 'Upload only jpg or png or jpeg or gif ';
-			
-		}
-	}
-	
-	$(document).ready(function(){
-		$('.date').datepicker({
-			changeYear:true,
-			changeMonth:true,
-			dateFormat:'dd/mm/yy'	
-		});
-		
-		$('#addDoc').click(function(){
-			var i=0;
-				$.ajax({
-					type:"GET",
-					url:"<?php echo URL::to('home/template/addDoc') ?>",
-					beforeSend: function() {
-					        // setting a timeout
-					       $('.loader').show();
-					    },
-					complete: function(){
-							$('.loader').hide();
-					},
-					success:function(data){
-						$('#docappend').append(data);
-					}
-				});
-		});
-		$('#addCompany').click(function(){
-				var i=0;
-				$.ajax({
-					type:"GET",
-					url:"<?php echo URL::to('home/template/addCompany') ?>",
-					beforeSend: function() {
-					        // setting a timeout
-					       $('.loader').show();
-					    },
-					complete: function(){
-							$('.loader').hide();
-					},
-					success:function(data){
-						$('#workexpappend').append(data);
-					}
-				});
-				
-		});
-
-	});
-</script>
+@include('branch/emp.editjs')
 @stop
