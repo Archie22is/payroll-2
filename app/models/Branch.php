@@ -15,4 +15,5 @@ class Branch extends Eloquent
 	{
 		return $this->hasOne('BranchContact','branch_id','id');
 	}
+	
 }

@@ -31,23 +31,29 @@ Route::group(array('before'=>'guest'),function(){
 });
 // Admin routes
 Route::group(array('before'=>'admin','prefix'=>'admin'),function(){
-	Route::get('/','App\Controller\Admin\IndexController@getIndex');
+	Route::get('empe/search','App\Controller\Admin\EmployeeController@search');
+	Route::post('empe/client-by-branch','App\Controller\Admin\EmployeeController@clientByBranch');
 	Route::controller('user','App\Controller\Admin\UserController');
 	Route::resource('branch','App\Controller\Admin\BranchController');
 	Route::resource('bank','App\Controller\Admin\BankController');
 	Route::resource('dept','App\Controller\Admin\DepartmentController');
 	Route::resource('empe','App\Controller\Admin\EmployeeController');
+	Route::controller('/','App\Controller\Admin\IndexController');
 });
 // Branch Routes
 Route::group(array('before'=>'branch','prefix'=>'branch'),function(){
-	// Route::get('/',function(){echo 'll';});
+	Route::get('employee/search','App\Controller\Branch\EmployeeController@search');
+	Route::get('employee/import','App\Controller\Branch\EmployeeController@importEmp');
 	Route::resource('client','App\Controller\Branch\ClientController');
 	Route::resource('employee','App\Controller\Branch\EmployeeController');
+
+	// Route::controller('/','App\Controller\Branch\IndexController');
 });
 // Client Routes
 Route::group(array('before'=>'client','prefix'=>$profile),function(){
-	// Route::get('/','App\Controller\Client\IndexController@getIndex');
+
 	Route::resource('emps','App\Controller\Client\EmployeeController');
+	// Route::resource('/','App\Controller\Client\IndexController@index');
 });
 // Employee Routes
 Route::group(array('before'=>'employee','prefix'=>$profile),function(){

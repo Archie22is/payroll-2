@@ -23,6 +23,7 @@ return array(
     'App\\Controller\\Client\\IndexController' => $baseDir . '/app/controllers/client/IndexController.php',
     'App\\Controller\\Emp\\ControllerBase' => $baseDir . '/app/controllers/emp/ControllerBase.php',
     'App\\Controller\\Emp\\IndexController' => $baseDir . '/app/controllers/emp/IndexController.php',
+    'App\\Lib\\libEmp' => $baseDir . '/app/lib/libEmp.php',
     'BankDetail' => $baseDir . '/app/models/BankDetail.php',
     'BaseController' => $baseDir . '/app/controllers/BaseController.php',
     'Branch' => $baseDir . '/app/models/Branch.php',

@@ -5,8 +5,8 @@ class BranchController extends ControllerBase
 	public function index()
 	{
 
-		$branch=\Branch::with('contact')->paginate(15);
-		return \View::make('admin/branch.branch_detail')->with('branch',$branch);
+		$user=\User::where('profilesId','=',2)->paginate(15);
+		return \View::make('admin/branch.branch_detail')->with('user',$user);
 	}
 	public function store()
 	{
@@ -189,6 +189,7 @@ class BranchController extends ControllerBase
 		$branch=\Branch::where('id','=',$id)->with('contact')->firstOrFail();
 		$user=\User::where('id','=',$branch->user_id)->firstOrFail();
 		$contact=\BranchContact::where('branch_id','=',$id)->firstOrFail();
+		$branchEmp=\BranchEmp::where('branch_id','=',$id)->firstOrFail();
 		if(!$user->delete())
 		{
 			\DB::rollback();
@@ -200,6 +201,11 @@ class BranchController extends ControllerBase
 			return \Redirect::back()->with('error','Failed to delete');
 		}
 		if(!$contact->delete())
+		{
+			\DB::rollback();
+			return \Redirect::back()->with('error','Failed to delete');
+		}
+		if(!$branchEmp->delete())
 		{
 			\DB::rollback();
 			return \Redirect::back()->with('error','Failed to delete');

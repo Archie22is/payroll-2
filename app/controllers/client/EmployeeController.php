@@ -11,9 +11,59 @@ class EmployeeController extends ControllerBase {
 	public function index()
 	{
 		$uId=\Auth::user()->id;
-		$list=\JobDetails::where('client_id','=',$uId)->paginate(20);
-		return \View::make('client/emp.manage_employee')
-					->with('list',$list);
+		$uId   = \Auth::user()->id;
+		$field = \Input::get('f');
+		if($value = \Input::get('v'))
+		{
+			
+			if($field =='username')
+			{
+				$emp = \User::whereHas('empJobDetail',function($q) use($uId){
+							$q->where('client_id',$uId);
+							})
+						->where('username','=',$value)
+						->where('profilesId','=',4)->paginate(20);
+			}
+			if($field == 'email')
+			{
+				$emp =  \User::whereHas('empJobDetail',function($q) use($uId){
+							$q->where('client_id',$uId);
+							})
+						->where('email','=',$value)
+						->where('profilesId','=',4)->paginate(20);
+			}
+			if($field == 'name')
+			{
+				// where condition we are checking in employee table of relation
+				$emp = \User::whereHas('empJobDetail',function($q) use($uId){
+							$q->where('client_id',$uId);
+							})
+						->whereHas('employee',function($q) use($value){
+							$q->where('firstname','like',"%$value%");
+						})
+ 						->where('profilesId','=',4)->paginate(20);
+			}
+			if($field == 'mobile')
+			{
+				//where condition we are cheking in contact table of relation table
+				$emp = \User::whereHas('contact',function($q) use($value){
+					$q->where('mobile','=',"$value");
+				})->where('profilesId','=',4)->paginate(20);
+			}
+			return \View::make('client/emp.manage_employee')
+					->withInput(\Input::flash())
+					->with('list',$emp);
+		}
+		else
+		{
+			$emp=\User::whereHas('empJobDetail',function($q) use($uId){
+				$q->where('client_id','=',$uId);
+				})->paginate(20);
+				return \View::make('client/emp.manage_employee')
+					->withInput(\Input::flash())
+					->with('list',$emp);
+		}
+		
 	}
 
 
@@ -94,6 +144,15 @@ class EmployeeController extends ControllerBase {
 	public function destroy($id)
 	{
 		//
+	}
+	public function search($id)
+	{
+		$uId=\Auth::user()->id;
+		$emp=\User::whereHas('empJobDetail',function($q) use($uId){
+				$q->where('client_id','=',$uId);
+		})->paginate(20);
+		return \View::make('client/emp.search_emp.blade.php')
+					->with('list',$emp);
 	}
 
 

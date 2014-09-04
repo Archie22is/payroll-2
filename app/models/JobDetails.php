@@ -21,4 +21,8 @@ class JobDetails extends Eloquent
 	{
 		return $this->hasOne('Department','id','department');
 	}
+	public function branch()
+	{
+		return $this->hasOne('BranchEmp','emp_id','user_id');
+	}
 }

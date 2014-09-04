@@ -36,26 +36,26 @@
 										
 
 									</tr>
-									
-										@forelse( $branch as $branchs)	
-										<?php $i=$branch->getFrom(); ?>
+										<?php $i=$user->getFrom(); ?>
+										@forelse( $user as $users)	
+										
 									<tr>
 										<td>{{$i++}}</td>
-										<td>{{ $branchs->branch_name}}</td>
-										<td>{{ $branchs->branch_code }}</td>
-										<td>{{ $branchs->contact->branch_head }}</td>
-										<td>{{ $branchs->branch_city }}</td>
+										<td>{{ $users->branch->branch_name or ''}}</td>
+										<td>{{ $users->branch->branch_code or '' }}</td>
+										<td>{{ $users->branch->contact->branch_head or ''}}</td>
+										<td>{{ $users->branch->branch_city or ''}}</td>
 										<td>
 											<table style="border-left:none!important">
 												<tr>
 													<td style="padding: 0px!important;border-left:none!important;">
-														{{Form::open(array('route'=>array('admin.branch.edit',$branchs->id),'method'=>'get')) }}
+														{{Form::open(array('route'=>array('admin.branch.edit',$users->branch->id),'method'=>'get')) }}
 															<button class="btn btn-info btn-xs" title="Edit" type="submit"><i class="fa fa-pencil"></i></button>
 														{{Form::close()}}
 													</td>
 													<td style="padding: 0px!important;border-left:none!important;">|</td>
 													<td style="padding: 0px!important;border-left:none!important;">
-														{{Form::open(array('route'=>array('admin.branch.destroy',$branchs->id),'method'=>'delete')) }}
+														{{Form::open(array('route'=>array('admin.branch.destroy',$users->branch->id),'method'=>'delete')) }}
 															<button class="btn btn-danger btn-xs" title="Delete" type="submit" onclick="return confirm('Are you want to delete')"><i class="fa fa-trash-o"></i></button>
 														{{Form::close()}}													
 													</td>
@@ -71,8 +71,8 @@
 									@endforelse
 															
 								</table><!-- end table -->
-								@if($branch)
-								{{$branch->links()}}
+								@if($user)
+								{{$user->links()}}
 								@endif
 							</div><!-- end table-responsive -->
 							<div class="clearfix"></div>

@@ -835,6 +835,122 @@ class EmployeeController extends ControllerBase {
 			return \Redirect::back()->with('error','Failed to delete');
 		}
 	}
+	/* function for search criteria */
+	public function search()
+	{
+		$uId   = \Auth::user()->id;
+		$field = \Input::get('f');
+		if($value = \Input::get('v'))
+		{
+			
+			if($field =='username')
+			{
+				$emp = \User::whereHas('empJobDetail',function($q) use($uId){
+							$q->whereHas('branch',function($s) use($uId){
+								$s->where('branch_id','=',$uId);
+							});
+						})
+						->where('username','=',$value)
+						->where('profilesId','=',4)->paginate(20);
+			}
+			if($field == 'email')
+			{
+				$emp =  \User::whereHas('empJobDetail',function($q) use($uId){
+							$q->whereHas('branch',function($s) use($uId){
+								$s->where('branch_id','=',$uId);
+							});
+						})
+						->where('email','=',$value)
+						->where('profilesId','=',4)->paginate(20);
+			}
+			if($field == 'name')
+			{
+				// where condition we are checking in employee table of relation
+				$emp = \User::whereHas('empJobDetail',function($q) use($uId){
+							$q->whereHas('branch',function($s) use($uId){
+								$s->where('branch_id','=',$uId);
+							});
+						})
+						->whereHas('employee',function($q) use($value){
+							$q->where('firstname','like',"%$value%");
+						})
+ 						->where('profilesId','=',4)->paginate(20);
+			}
+			if($field == 'mobile')
+			{
+				//where condition we are cheking in contact table of relation table
+				$emp = \User::whereHas('contact',function($q) use($value){
+					$q->where('mobile','=',"$value");
+				})->where('profilesId','=',4)->paginate(20);
+			}
+			return \View::make('branch/emp.search_emp')
+							->withInput(\Input::flash())
+							->with('list',$emp);
+		}
+		else
+		{
+			if($field == 'client')
+			{
+				$client_id = \Input::get('clientId');
+				if($client_id == 'in-house')
+				{
+					$emp = \User::whereHas('empJobDetail',function($q) use($uId){
+							$q->where('emp_type','=','inhouse');
+							$q->whereHas('branch',function($s) use($uId){
+								$s->where('branch_id','=',$uId);
+							});
+						})->paginate(20);
+						return \View::make('branch/emp.search_emp')
+							    ->withInput(\Input::flash())
+								->with('list',$emp);
+				}
+				else
+				{
+					$validate=\Validator::make(array('client'=>$client_id),array('client'=>'required|numeric'));
+					if($validate->fails())
+					{
+						return \View::make('branch/emp.search_emp')
+								->withErrors($validate)
+								->withInput(\Input::flash())
+								->with('list',array());
+					}
+					else
+					{
+						$emp = \User::whereHas('empJobDetail',function($q) use($client_id){
+								$q->where('emp_type','=','outsource');
+								$q->where('client_id','=',$client_id);
+							})->paginate(20);
+						return \View::make('branch/emp.search_emp')
+							    ->withInput(\Input::flash())
+								->with('list',$emp);
+					}
+				}
+				
+			}
+			if($field == 'all' )
+			{
+				$emp =  \User::whereHas('empJobDetail',function($q) use($uId){
+								$q->whereHas('branch',function($s) use($uId){
+								$s->where('branch_id','=',$uId);
+							});
+						})->paginate(20);
+				return \View::make('branch/emp.search_emp')
+							->withInput(\Input::flash())
+							->with('list',$emp);
+			}
+			else
+			{
+				return \View::make('branch/emp.search_emp')
+					->withInput(\Input::flash())
+					->with('list',array());
+			}
+			
+		}
+	}
+	public function importEmp()
+	{
+		return \View::make('branch/emp/import');
+	}
 
 
 }

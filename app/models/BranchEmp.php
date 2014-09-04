@@ -13,4 +13,12 @@ class BranchEmp extends Eloquent
 	{
 		return $this->hasOne('User','id','branch_id');
 	}
+	public function branch()
+	{
+		return $this->hasOne('Branch','user_id','branch_id');
+	}
+	public function empJob()
+	{
+		return $this->hasOne('JobDetails','user_id','emp_id');
+	}
 }

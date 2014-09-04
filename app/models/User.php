@@ -43,6 +43,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		return $this->hasOne('Company','user_id','id');
 	}
+	public function branch()
+	{
+		return $this->hasOne('Branch','user_id','id');
+	}
 	// starts Employee Relations
 	public function employee()
 	{
@@ -75,6 +79,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function empDocument()
 	{
 		return $this->hasMany('EmpDoc','user_id','id');
+	}
+	public function empClient()
+	{
+		return $this->hasOne('Company','user_id',31);
 	}
 	//Ends Employee Relations
 
