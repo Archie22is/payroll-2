@@ -51,7 +51,6 @@ return array(
     'PfEsi' => $baseDir . '/app/models/PfEsi.php',
     'Profile' => $baseDir . '/app/models/Profile.php',
     'SessionHandlerInterface' => $vendorDir . '/symfony/http-foundation/Symfony/Component/HttpFoundation/Resources/stubs/SessionHandlerInterface.php',
-    'Symfony\\Component\\HttpFoundation\\Resources\\stubs\\FakeFile' => $vendorDir . '/symfony/http-foundation/Symfony/Component/HttpFoundation/Resources/stubs/FakeFile.php',
     'TestCase' => $baseDir . '/app/tests/TestCase.php',
     'User' => $baseDir . '/app/models/User.php',
     'UserContact' => $baseDir . '/app/models/UserContact.php',

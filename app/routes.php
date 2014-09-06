@@ -43,7 +43,8 @@ Route::group(array('before'=>'admin','prefix'=>'admin'),function(){
 // Branch Routes
 Route::group(array('before'=>'branch','prefix'=>'branch'),function(){
 	Route::get('employee/search','App\Controller\Branch\EmployeeController@search');
-	Route::get('employee/import','App\Controller\Branch\EmployeeController@importEmp');
+	Route::get('employee/import','App\Controller\Branch\EmployeeController@getImportEmp');
+	Route::post('employee/import','App\Controller\Branch\EmployeeController@postImportEmp');
 	Route::resource('client','App\Controller\Branch\ClientController');
 	Route::resource('employee','App\Controller\Branch\EmployeeController');
 

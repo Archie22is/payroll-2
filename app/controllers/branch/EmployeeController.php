@@ -947,9 +947,138 @@ class EmployeeController extends ControllerBase {
 			
 		}
 	}
-	public function importEmp()
+	public function getImportEmp()
 	{
+
 		return \View::make('branch/emp/import');
+	}
+	public function postImportEmp()
+	{
+		if(\Request::ajax())
+		{
+			$efile = \Input::file('upload');
+			/* Validation of file */
+			$validate = \Validator::make(array('file'=>$efile),array('file'=>'required|mimes:xls,csv|max:2000|min:1'));
+			if($validate->fails())
+			{
+				$error= array('error'=>$validate->messages()->first());
+				echo json_encode($error);
+				return;
+			}
+			/* End validation of file*/
+			else
+			{
+				$handle = file($efile->getRealPath());
+				$users  = array('displayname','email');
+				$sheet1=array('f1','f2','f3','f4','f5','f6','f7');
+				$sheet2=array('s1','s2','s3','s4','s5','s6','s7');
+				/* Call Excel Class */
+				$objPHPExcel = \PHPExcel_IOFactory::load($efile->getRealPath());
+				$mainArr = array();
+				foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) 
+				{
+					// Sheet names
+					switch($worksheet->getTitle())
+					{
+						case 'User':
+						$field=$users;
+						$index='users';
+						break;
+						case 'PersonalDetails':
+						$field=$sheet1;
+						$index='PersonalDetails';
+						break;
+						case 'ContactInfo':
+						$index='ContactInfo';
+						$field=$sheet2;
+						break;
+						case 'IdentificationandBankInfo':
+						$index='IdentificationandBankInfo';
+						$field=$sheet2;
+						break;
+						case 'PFandESIInformation':
+						$index='PFandESIInformation';
+						$field=$sheet2;
+						break;
+						case 'JobDetails':
+						$index='JobDetails';
+						$field=$sheet2;
+						break;
+						case 'EducationalBackground':
+						$index='EducationalBackground';
+						$field=$sheet2;
+						break;
+						case 'WorkExperience':
+						$index='WorkExperience';
+						$field=$sheet2;
+						break;
+					}
+					
+					// Getting all cells
+					$subArr=array();
+					$rows=$worksheet->getRowIterator();
+					foreach($rows as $row)
+					{
+						$cells = $row->getCellIterator();
+						// cells store into data array 
+						$data=array();
+						foreach ($cells as $cell) 
+						{
+							$data[]=$cell->getCalculatedValue();
+						}
+						
+						if($data){
+						// one set of row stored in indexed array
+						$arr[$index]=$data;
+						// indexed array store into subarr
+						$subArr[]=$arr;
+						// remove indexd array for optimiced douplicated
+						unset($arr);
+					   }
+					}
+					// every sheet of array store in main Arr
+					$mainArr[$index]=$subArr;
+					unset($subArr);
+				}
+				
+				$emails=array_fetch($mainArr['users'],'users.1');
+				// Validate emails
+				foreach ($emails as $value) 
+				{
+					if (preg_match("/^[^0-9][A-z0-9_]+([.][A-z0-9_]+)*[@][A-z0-9_]+([.][A-z0-9_]+)*[.][A-z]{2,4}$/", $value)) 
+					{
+						
+					}
+					else
+					{
+						$error= array('error'=>"$value InValid Email");
+						echo json_encode($error);
+						return;
+					}
+				}
+				// validation email unique from excel
+					if(count($emails) != count(array_unique($emails)))
+					{
+						$error= array('error'=>"Douplicate emails are available");
+						echo json_encode($error);
+						return;
+					}
+				//end email unique in excel 
+				//Check Email Id is unique or not
+				$user = \User::withTrashed()->whereIn('email',$emails)->first();
+				if($user)
+				{
+					$error= array('error'=>"$user->email already registered");
+					echo json_encode($error);
+					return;
+				}
+				echo "<pre>";
+					print_r($user);
+			}
+
+		}
+		
+		
 	}
 
 

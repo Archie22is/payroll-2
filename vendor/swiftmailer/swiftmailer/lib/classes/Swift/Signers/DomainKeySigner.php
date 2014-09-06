@@ -11,8 +11,6 @@
 /**
  * DomainKey Signer used to apply DomainKeys Signature to a message
  *
- * @package    Swift
- * @subpackage Signatures
  * @author     Xavier De Cock <xdecock@gmail.com>
  */
 class Swift_Signers_DomainKeySigner implements Swift_Signers_HeaderSigner
@@ -62,7 +60,7 @@ class Swift_Signers_DomainKeySigner implements Swift_Signers_HeaderSigner
     /**
      * Signer identity
      *
-     * @var unknown_type
+     * @var string
      */
     protected $_signerIdentity;
 
@@ -82,13 +80,6 @@ class Swift_Signers_DomainKeySigner implements Swift_Signers_HeaderSigner
     private $_signedHeaders = array();
 
     /**
-     * If debugHeaders is set store debugDatas here
-     *
-     * @var string
-     */
-    private $_debugHeadersData = '';
-
-    /**
      * Stores the signature header
      *
      * @var Swift_Mime_Headers_ParameterizedHeader
@@ -98,7 +89,7 @@ class Swift_Signers_DomainKeySigner implements Swift_Signers_HeaderSigner
     /**
      * Hash Handler
      *
-     * @var hash_ressource
+     * @var resource|null
      */
     private $_hashHandler;
 
@@ -141,10 +132,11 @@ class Swift_Signers_DomainKeySigner implements Swift_Signers_HeaderSigner
      * @param string $selector
      * @return Swift_Signers_DomainKeySigner
      */
-    public static function newInstance($privateKey, $domainName, $selector) {
+    public static function newInstance($privateKey, $domainName, $selector)
+    {
         return new static($privateKey, $domainName, $selector);
     }
-    
+
     /**
      * Resets internal states
      *
@@ -156,7 +148,7 @@ class Swift_Signers_DomainKeySigner implements Swift_Signers_HeaderSigner
         $this->_hashHandler = null;
         $this->_bodyCanonIgnoreStart = 2;
         $this->_bodyCanonEmptyCounter = 0;
-        $this->_bodyCanonLastChar = NULL;
+        $this->_bodyCanonLastChar = null;
         $this->_bodyCanonSpace = false;
 
         return $this;

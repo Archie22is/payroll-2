@@ -31,18 +31,14 @@ class ClassLoader
     }
     public static function addDirectories($directories)
     {
-        static::$directories = array_merge(static::$directories, (array) $directories);
-        static::$directories = array_unique(static::$directories);
+        static::$directories = array_unique(array_merge(static::$directories, (array) $directories));
     }
     public static function removeDirectories($directories = null)
     {
         if (is_null($directories)) {
             static::$directories = array();
         } else {
-            $directories = (array) $directories;
-            static::$directories = array_filter(static::$directories, function ($directory) use($directories) {
-                return !in_array($directory, $directories);
-            });
+            static::$directories = array_diff(static::$directories, (array) $directories);
         }
     }
     public static function getDirectories()
@@ -428,7 +424,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class Application extends Container implements HttpKernelInterface, TerminableInterface, ResponsePreparerInterface
 {
-    const VERSION = '4.2.7';
+    const VERSION = '4.2.8';
     protected $booted = false;
     protected $bootingCallbacks = array();
     protected $bootedCallbacks = array();
@@ -481,7 +477,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
     }
     public static function getBootstrapFile()
     {
-        return 'C:\\xampp\\htdocs\\myTemplateL\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation' . '/start.php';
+        return 'C:\\xampp\\htdocs\\payroll\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation' . '/start.php';
     }
     public function startExceptionHandling()
     {
@@ -1004,7 +1000,7 @@ class Request extends SymfonyRequest
     }
     public function all()
     {
-        return array_merge_recursive($this->input(), $this->files->all());
+        return array_replace_recursive($this->input(), $this->files->all());
     }
     public function input($key = null, $default = null)
     {
@@ -1364,6 +1360,7 @@ class Request
     }
     public function overrideGlobals()
     {
+        $this->server->set('QUERY_STRING', static::normalizeQueryString(http_build_query($this->query->all(), null, '&')));
         $_GET = $this->query->all();
         $_POST = $this->request->all();
         $_SERVER = $this->server->all();
@@ -1611,7 +1608,7 @@ class Request
             }
         }
         $host = strtolower(preg_replace('/:\\d+$/', '', trim($host)));
-        if ($host && !preg_match('/^\\[?(?:[a-zA-Z0-9-:\\]_]+\\.?)+$/', $host)) {
+        if ($host && '' !== preg_replace('/(?:^\\[)?[a-zA-Z0-9-:\\]_]+\\.?/', '', $host)) {
             throw new \UnexpectedValueException(sprintf('Invalid Host "%s"', $host));
         }
         if (count(self::$trustedHostPatterns) > 0) {
@@ -1700,6 +1697,10 @@ class Request
         if (null === $this->locale) {
             $this->setPhpDefaultLocale($locale);
         }
+    }
+    public function getDefaultLocale()
+    {
+        return $this->defaultLocale;
     }
     public function setLocale($locale)
     {
@@ -2167,12 +2168,12 @@ class ServerBag extends ParameterBag
                 $authorizationHeader = $this->parameters['REDIRECT_HTTP_AUTHORIZATION'];
             }
             if (null !== $authorizationHeader) {
-                if (0 === stripos($authorizationHeader, 'basic')) {
-                    $exploded = explode(':', base64_decode(substr($authorizationHeader, 6)));
+                if (0 === stripos($authorizationHeader, 'basic ')) {
+                    $exploded = explode(':', base64_decode(substr($authorizationHeader, 6)), 2);
                     if (count($exploded) == 2) {
                         list($headers['PHP_AUTH_USER'], $headers['PHP_AUTH_PW']) = $exploded;
                     }
-                } elseif (empty($this->parameters['PHP_AUTH_DIGEST']) && 0 === stripos($authorizationHeader, 'digest')) {
+                } elseif (empty($this->parameters['PHP_AUTH_DIGEST']) && 0 === stripos($authorizationHeader, 'digest ')) {
                     $headers['PHP_AUTH_DIGEST'] = $authorizationHeader;
                     $this->parameters['PHP_AUTH_DIGEST'] = $authorizationHeader;
                 }
@@ -3267,6 +3268,166 @@ trait MacroableTrait
 }
 namespace Illuminate\Support;
 
+use Closure;
+use Illuminate\Support\Traits\MacroableTrait;
+class Arr
+{
+    use MacroableTrait;
+    public static function add($array, $key, $value)
+    {
+        if (is_null(static::get($array, $key))) {
+            static::set($array, $key, $value);
+        }
+        return $array;
+    }
+    public static function build($array, Closure $callback)
+    {
+        $results = array();
+        foreach ($array as $key => $value) {
+            list($innerKey, $innerValue) = call_user_func($callback, $key, $value);
+            $results[$innerKey] = $innerValue;
+        }
+        return $results;
+    }
+    public static function divide($array)
+    {
+        return array(array_keys($array), array_values($array));
+    }
+    public static function dot($array, $prepend = '')
+    {
+        $results = array();
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $results = array_merge($results, static::dot($value, $prepend . $key . '.'));
+            } else {
+                $results[$prepend . $key] = $value;
+            }
+        }
+        return $results;
+    }
+    public static function except($array, $keys)
+    {
+        return array_diff_key($array, array_flip((array) $keys));
+    }
+    public static function fetch($array, $key)
+    {
+        foreach (explode('.', $key) as $segment) {
+            $results = array();
+            foreach ($array as $value) {
+                $value = (array) $value;
+                $results[] = $value[$segment];
+            }
+            $array = array_values($results);
+        }
+        return array_values($results);
+    }
+    public static function first($array, $callback, $default = null)
+    {
+        foreach ($array as $key => $value) {
+            if (call_user_func($callback, $key, $value)) {
+                return $value;
+            }
+        }
+        return value($default);
+    }
+    public static function last($array, $callback, $default = null)
+    {
+        return static::first(array_reverse($array), $callback, $default);
+    }
+    public static function flatten($array)
+    {
+        $return = array();
+        array_walk_recursive($array, function ($x) use(&$return) {
+            $return[] = $x;
+        });
+        return $return;
+    }
+    public static function forget(&$array, $keys)
+    {
+        foreach ((array) $keys as $key) {
+            $parts = explode('.', $key);
+            while (count($parts) > 1) {
+                $part = array_shift($parts);
+                if (isset($array[$part]) && is_array($array[$part])) {
+                    $array =& $array[$part];
+                }
+            }
+            unset($array[array_shift($parts)]);
+        }
+    }
+    public static function get($array, $key, $default = null)
+    {
+        if (is_null($key)) {
+            return $array;
+        }
+        if (isset($array[$key])) {
+            return $array[$key];
+        }
+        foreach (explode('.', $key) as $segment) {
+            if (!is_array($array) || !array_key_exists($segment, $array)) {
+                return value($default);
+            }
+            $array = $array[$segment];
+        }
+        return $array;
+    }
+    public static function only($array, $keys)
+    {
+        return array_intersect_key($array, array_flip((array) $keys));
+    }
+    public static function pluck($array, $value, $key = null)
+    {
+        $results = array();
+        foreach ($array as $item) {
+            $itemValue = is_object($item) ? $item->{$value} : $item[$value];
+            if (is_null($key)) {
+                $results[] = $itemValue;
+            } else {
+                $itemKey = is_object($item) ? $item->{$key} : $item[$key];
+                $results[$itemKey] = $itemValue;
+            }
+        }
+        return $results;
+    }
+    public static function pull(&$array, $key, $default = null)
+    {
+        $value = static::get($array, $key, $default);
+        static::forget($array, $key);
+        return $value;
+    }
+    public static function set(&$array, $key, $value)
+    {
+        if (is_null($key)) {
+            return $array = $value;
+        }
+        $keys = explode('.', $key);
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+            if (!isset($array[$key]) || !is_array($array[$key])) {
+                $array[$key] = array();
+            }
+            $array =& $array[$key];
+        }
+        $array[array_shift($keys)] = $value;
+        return $array;
+    }
+    public static function sort($array, Closure $callback)
+    {
+        return Collection::make($array)->sortBy($callback)->all();
+    }
+    public static function where($array, Closure $callback)
+    {
+        $filtered = array();
+        foreach ($array as $key => $value) {
+            if (call_user_func($callback, $key, $value)) {
+                $filtered[$key] = $value;
+            }
+        }
+        return $filtered;
+    }
+}
+namespace Illuminate\Support;
+
 use Illuminate\Support\Traits\MacroableTrait;
 class Str
 {
@@ -3291,7 +3452,7 @@ class Str
     public static function endsWith($haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if ($needle == substr($haystack, -strlen($needle))) {
+            if ((string) $needle === substr($haystack, -strlen($needle))) {
                 return true;
             }
         }
@@ -4541,7 +4702,7 @@ class Router implements HttpKernelInterface, RouteFiltererInterface
     }
     public function match($methods, $uri, $action)
     {
-        return $this->addRoute($methods, $uri, $action);
+        return $this->addRoute(array_map('strtoupper', (array) $methods), $uri, $action);
     }
     public function controllers(array $controllers)
     {
@@ -5495,8 +5656,8 @@ class RouteCollection implements Countable, IteratorAggregate
     }
     protected function addToCollections($route)
     {
+        $domainAndUri = $route->domain() . $route->getUri();
         foreach ($route->methods() as $method) {
-            $domainAndUri = $route->domain() . $route->getUri();
             $this->routes[$method][$domainAndUri] = $route;
         }
         $this->allRoutes[$method . $domainAndUri] = $route;
@@ -7315,16 +7476,30 @@ class DatabaseManager implements ConnectionResolverInterface
         }
         return $this->connections[$name];
     }
-    public function reconnect($name = null)
+    public function purge($name = null)
     {
-        $name = $name ?: $this->getDefaultConnection();
         $this->disconnect($name);
-        return $this->connection($name);
+        unset($this->connections[$name]);
     }
     public function disconnect($name = null)
     {
-        $name = $name ?: $this->getDefaultConnection();
-        unset($this->connections[$name]);
+        if (isset($this->connections[$name = $name ?: $this->getDefaultConnection()])) {
+            $this->connections[$name]->disconnect();
+        }
+    }
+    public function reconnect($name = null)
+    {
+        $this->disconnect($name = $name ?: $this->getDefaultConnection());
+        if (!isset($this->connections[$name])) {
+            return $this->connection($name);
+        } else {
+            return $this->refreshPdoConnections($name);
+        }
+    }
+    protected function refreshPdoConnections($name)
+    {
+        $fresh = $this->makeConnection($name);
+        return $this->connections[$name]->setPdo($fresh->getPdo())->setReadPdo($fresh->getReadPdo());
     }
     protected function makeConnection($name)
     {
@@ -7350,6 +7525,9 @@ class DatabaseManager implements ConnectionResolverInterface
         });
         $connection->setPaginator(function () use($app) {
             return $app['paginator'];
+        });
+        $connection->setReconnector(function ($connection) {
+            $this->reconnect($connection->getName());
         });
         return $connection;
     }
@@ -8198,6 +8376,9 @@ class Encrypter
     }
     protected function validMac(array $payload)
     {
+        if (!function_exists('openssl_random_pseudo_bytes')) {
+            throw new \RuntimeException('OpenSSL extension is required.');
+        }
         $bytes = (new SecureRandom())->nextBytes(16);
         $calcMac = hash_hmac('sha256', $this->hash($payload['iv'], $payload['value']), $bytes, true);
         return StringUtils::equals(hash_hmac('sha256', $payload['mac'], $bytes, true), $calcMac);
@@ -8753,7 +8934,8 @@ class StreamHandler extends AbstractProcessingHandler
     protected $url;
     private $errorMessage;
     protected $filePermission;
-    public function __construct($stream, $level = Logger::DEBUG, $bubble = true, $filePermission = null)
+    protected $useLocking;
+    public function __construct($stream, $level = Logger::DEBUG, $bubble = true, $filePermission = null, $useLocking = false)
     {
         parent::__construct($level, $bubble);
         if (is_resource($stream)) {
@@ -8762,6 +8944,7 @@ class StreamHandler extends AbstractProcessingHandler
             $this->url = $stream;
         }
         $this->filePermission = $filePermission;
+        $this->useLocking = $useLocking;
     }
     public function close()
     {
@@ -8788,7 +8971,13 @@ class StreamHandler extends AbstractProcessingHandler
                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened: ' . $this->errorMessage, $this->url));
             }
         }
+        if ($this->useLocking) {
+            flock($this->stream, LOCK_EX);
+        }
         fwrite($this->stream, (string) $record['formatted']);
+        if ($this->useLocking) {
+            flock($this->stream, LOCK_UN);
+        }
     }
     private function customErrorHandler($code, $msg)
     {
@@ -8806,14 +8995,14 @@ class RotatingFileHandler extends StreamHandler
     protected $nextRotation;
     protected $filenameFormat;
     protected $dateFormat;
-    public function __construct($filename, $maxFiles = 0, $level = Logger::DEBUG, $bubble = true, $filePermission = null)
+    public function __construct($filename, $maxFiles = 0, $level = Logger::DEBUG, $bubble = true, $filePermission = null, $useLocking = false)
     {
         $this->filename = $filename;
         $this->maxFiles = (int) $maxFiles;
         $this->nextRotation = new \DateTime('tomorrow');
         $this->filenameFormat = '{filename}-{date}';
         $this->dateFormat = 'Y-m-d';
-        parent::__construct($this->getTimedFilename(), $level, $bubble, $filePermission);
+        parent::__construct($this->getTimedFilename(), $level, $bubble, $filePermission, $useLocking);
     }
     public function close()
     {

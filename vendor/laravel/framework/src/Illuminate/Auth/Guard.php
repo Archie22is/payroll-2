@@ -662,22 +662,6 @@ class Guard {
 	{
 		return $this->user;
 	}
-	/**
-	 * Return the currently cached user of the application.
-	 *
-	 * @return \Illuminate\Auth\UserInterface|null
-	 */
-	public function getProfile()
-	{
-		if($this->user->profile)
-		{
-			return $this->user->profile->name;
-		}
-		else
-		{
-			return false;
-		}
-	}
 
 	/**
 	 * Set the current user of the application.
@@ -691,7 +675,22 @@ class Guard {
 
 		$this->loggedOut = false;
 	}
-
+	/**
+	* Return the currently cached user of the application.
+	*
+	* @return \Illuminate\Auth\UserInterface|null
+	*/
+	public function getProfile()
+	{
+		if($this->user->profile)
+		{
+			return $this->user->profile->name;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	/**
 	 * Get the current request instance.
 	 *
@@ -706,7 +705,7 @@ class Guard {
 	 * Set the current request instance.
 	 *
 	 * @param  \Symfony\Component\HttpFoundation\Request
-	 * @return \Illuminate\Auth\Guard
+	 * @return $this
 	 */
 	public function setRequest(Request $request)
 	{
