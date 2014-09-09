@@ -47,6 +47,7 @@ Route::group(array('before'=>'branch','prefix'=>'branch'),function(){
 	Route::post('employee/import','App\Controller\Branch\EmployeeController@postImportEmp');
 	Route::resource('client','App\Controller\Branch\ClientController');
 	Route::resource('employee','App\Controller\Branch\EmployeeController');
+	Route::resource('employee-attendance','App\Controller\Branch\EmpAttendanceController');
 
 	// Route::controller('/','App\Controller\Branch\IndexController');
 });

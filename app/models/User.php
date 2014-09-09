@@ -82,7 +82,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 	public function empClient()
 	{
-		return $this->hasOne('Company','user_id',31);
+		return $this->hasOne('Company','user_id','id');
+	}
+	public function empAttend()
+	{
+		return $this->hasOne('EmpAttendance','emp_id','id');
 	}
 	//Ends Employee Relations
 

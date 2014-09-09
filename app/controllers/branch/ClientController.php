@@ -38,19 +38,19 @@ class ClientController extends ControllerBase {
 		// User details
 		// Transaction begins here
 		\DB::beginTransaction();
-		$displayname = \Input::get('displayname');
-		$email       = \Input::get('email');
-		$username    = \Input::get('username');
-		$password    = \Input::get('password');
+		$displayname  = \Input::get('displayname');
+		$email        = \Input::get('email');
+		$username     = \Input::get('username');
+		$password     = \Input::get('password');
 		$hashPassword = \Hash::make($password);
-		$user        = \User::insertGetId(array(
-						'displayname' => $displayname,
-						'email'       => $email,
-						'username'    => $username,
-						'password'    => $hashPassword,
-						'profilesId'  => 3,
-						'active'     =>'Y'
-						));
+		$user         = \User::insertGetId(array(
+				'displayname' => $displayname,
+				'email'       => $email,
+				'username'    => $username,
+				'password'    => $hashPassword,
+				'profilesId'  => 3,
+				'active'      =>'Y'
+				));
 		if(!$user)
 		{
 			\DB::rollback();

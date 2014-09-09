@@ -41,12 +41,26 @@
 				<!-- Branch Part -->
 				<ul class="list-unstyled">
 					<li><a href="#" class="active"><i class='fa fa-desktop'></i> Dashboard</a></li>
-					<li><a href="<?php echo URL::to('branch/client'); ?>"><i class="fa fa-user"></i> Manage Client</a></li><!-- manage Client -->
-					<li><a href="<?php echo URL::to('branch/employee'); ?>"><i class="fa fa-user"></i> Manage Employee</a></li><!-- manage Employee -->
-					<li><a href="<?php echo URL::to('branch/employee/search'); ?>"><i class="fa fa-search"></i> Search Employee</a></li><!-- search Employee -->
-					<li><a href="<?php echo URL::to('branch/employee/import'); ?>"><i class="fa fa-search"></i> Import Employee</a></li><!-- search Employee -->
+					<!-- dropdown -->
+					<li class="has_submenu" id="manage-emp"><a href="#"><i class="fa fa-user"></i>ManageEmployee <span class="nav-caret fa fa-caret-down"></span></a>
+						<ul class="list-unstyled">
+							<li><a href="<?php echo URL::to('branch/employee'); ?>"><i class="fa fa-user"></i> Manage Employee</a></li>
+							<li><a href="<?php echo URL::to('branch/employee/import'); ?>"><i class="fa fa-upload"></i> Import Employee</a></li>
+						</ul>
+					</li>
+					<!-- end dropdown -->
+					<li><a href="<?php echo URL::to('branch/client'); ?>"><i class="fa fa-user"></i> Manage Client</a></li>
+					<li><a href="<?php echo URL::to('branch/employee/search'); ?>"><i class="fa fa-search"></i> Search Employee</a></li>
+					<!-- start dropdown -->
+					<li class="has_submenu" id="s_payroll"><a href=""><i class="fa fa-pencil"></i> Manage PayRoll<span class="nav-caret fa fa-caret-down"></span></a>
+						<ul class="list-unstyled">
+							<li><a href="<?php echo URL::to('branch/employee-attendance') ?>"><i class="fa fa-anchor"></i> Attendance</a></li>
+							<li><a href=""><i class=""></i> Salary</a></li>
+						</ul>
+					</li>
+					<!-- end dropdown -->
 					
-
+				
 				</ul><!-- list-unstyled -->
 				<!-- Branch Part ended -->
 				<!-- Client slidebar -->

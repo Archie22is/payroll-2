@@ -15,6 +15,12 @@
 									</div><!-- input company_name -->
 								</div><!-- end form-group -->
 								<div class="form-group">
+									<label class="col-lg-2 control-label" for="company_code">Company Code</label>
+									<div class="col-lg-5">
+										<input type="text" name="company_code" id="company_code" placeholder="Company Code" class="form-control required">
+									</div><!-- input company_code -->
+								</div><!-- end form-group -->
+								<div class="form-group">
 									<label class="col-lg-2 control-label" for="company_address">Address</label>		
 									<div class="col-lg-5">
 										<textarea class="form-control textarea" name="company_address" id="company_address" placholder="Address"></textarea>
@@ -100,28 +106,7 @@
 								</div><!-- end form-group -->
 							</div><!-- end form2 -->
 							<!-- end contact Info -->
-							<!-- start user credentail -->
-							<h2>User Credential</h2>
-							<div class="form3">
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="username">UserName</label>
-									<div class="col-lg-5">
-										<input type="text" name="username" id="username" placeholder="UserName" class="form-control required">
-									</div><!-- end input-form  -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="password">Password</label>
-									<div class="col-lg-5">
-										<input type="password" name="password" id="password" placeholder="Password" class="form-control required">
-									</div><!-- end input-form  -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="confirm_password">Confirm Password</label>
-									<div class="col-lg-5">
-										<input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" class="form-control required">
-									</div><!-- end input-form  -->
-								</div><!-- end form-group -->
-							</div><!-- end form3 -->
+						
 						</div><!-- end wizard -->
 					{{Form::close()}}<!-- end form -->
 				

@@ -64,7 +64,7 @@ $(document).ready(function() {
 			contentType: false, 
 			beforeSend: function()
 			{
-				// $('#btnSubmit').button('loading');
+				$('#btnSubmit').button('loading');
 			},
 			success : function(data)
 			{
@@ -76,7 +76,8 @@ $(document).ready(function() {
 				}
 				if(status.success)
 				{
-					alert(status.success);
+					$('.status').html("<div class='alert alert-success'>"+status.success+"</div>");
+					fadeOut();
 				}
 			},
 			complete : function()

@@ -969,9 +969,6 @@ class EmployeeController extends ControllerBase {
 			else
 			{
 				$handle = file($efile->getRealPath());
-				$users  = array('displayname','email');
-				$sheet1=array('f1','f2','f3','f4','f5','f6','f7');
-				$sheet2=array('s1','s2','s3','s4','s5','s6','s7');
 				/* Call Excel Class */
 				$objPHPExcel = \PHPExcel_IOFactory::load($efile->getRealPath());
 				$mainArr = array();
@@ -981,36 +978,28 @@ class EmployeeController extends ControllerBase {
 					switch($worksheet->getTitle())
 					{
 						case 'User':
-						$field=$users;
 						$index='users';
 						break;
 						case 'PersonalDetails':
-						$field=$sheet1;
 						$index='PersonalDetails';
 						break;
 						case 'ContactInfo':
 						$index='ContactInfo';
-						$field=$sheet2;
 						break;
 						case 'IdentificationandBankInfo':
 						$index='IdentificationandBankInfo';
-						$field=$sheet2;
 						break;
 						case 'PFandESIInformation':
 						$index='PFandESIInformation';
-						$field=$sheet2;
 						break;
 						case 'JobDetails':
 						$index='JobDetails';
-						$field=$sheet2;
 						break;
 						case 'EducationalBackground':
 						$index='EducationalBackground';
-						$field=$sheet2;
 						break;
 						case 'WorkExperience':
 						$index='WorkExperience';
-						$field=$sheet2;
 						break;
 					}
 					
@@ -1072,14 +1061,166 @@ class EmployeeController extends ControllerBase {
 					echo json_encode($error);
 					return;
 				}
-				echo "<pre>";
-					print_r($user);
-			}
+				// Database insertion starts here
+				$users                     =	$mainArr['users'];
+				$PersonalDetails           =	$mainArr['PersonalDetails'];
+				$ContactInfo               =	$mainArr['ContactInfo'];
+				$IdentificationandBankInfo =	$mainArr['IdentificationandBankInfo'];
+				$PFandESIInformation       =	$mainArr['PFandESIInformation'];
+				$JobDetails                =	$mainArr['JobDetails'];
+				$EducationalBackground     =	$mainArr['EducationalBackground'];
+				$WorkExperience            =	$mainArr['WorkExperience'];
+				// Create UserId 
+				$userID     =\Auth::user()->id;
+				$branch     =\Branch::where('user_id','=',$userID)->first();
+				$prifix     = $branch->branch_code;// branch prifix code
+				$count         =\BranchEmp::withTrashed()->where('branch_id','=',$userID)->count();// count all registered user of this branch
+				$i=0;
+				foreach($users as $val)
+				{
 
-		}
+					\DB::beginTransaction();
+					$temp       = $count+1;// increase one 
+					$count++;
+					$postfix    =sprintf('%04d',$temp);// manupulate 000$temp
+					$username   =$prifix.$postfix;
+					$password   =str_random(10);
+					$hashPassword = \Hash::make($password);
+					$email 		= $val['users'][1];
+					$uId=\User::insertGetId(array(
+						'username'    =>$username,
+						'password'    =>$hashPassword,
+						'displayname' =>$val['users'][0],
+						'email'       =>$val['users'][1],
+						'profilesId'  =>4,
+						'active'      =>'Y'
+						));
+					//create branch employee
+					$branchEmployee=\BranchEmp::insertGetId(array(
+						'branch_id' =>$userID,
+						'emp_id'    =>$uId
+						));
+					// Insert Personal detail
+
+					$empId=\Employee::insertGetId(array(
+							'user_id'        =>$uId,
+							'firstname'      =>$PersonalDetails[$i]['PersonalDetails'][0],
+							'lastname'       =>$PersonalDetails[$i]['PersonalDetails'][2],
+							'middlename'     =>$PersonalDetails[$i]['PersonalDetails'][1],
+							'fathername'     =>$PersonalDetails[$i]['PersonalDetails'][3],
+							'mothermaiden'   =>$PersonalDetails[$i]['PersonalDetails'][8],
+							'dateofbirth'    =>$PersonalDetails[$i]['PersonalDetails'][4],
+							'maritialstatus' =>$PersonalDetails[$i]['PersonalDetails'][5],
+							'spousename'     =>$PersonalDetails[$i]['PersonalDetails'][6],
+							'sibling'		 =>$PersonalDetails[$i]['PersonalDetails'][8],
+							'bloodgroup'     =>$PersonalDetails[$i]['PersonalDetails'][9]
+							
+							));
+					// Contact Information
+					$contact    =\UserContact::insertGetId(array(
+								'user_id'    =>$uId,
+								'address'    =>$ContactInfo[$i]['ContactInfo'][0],
+								'city'       =>$ContactInfo[$i]['ContactInfo'][1],
+								'state'      =>$ContactInfo[$i]['ContactInfo'][2],
+								'pin'        =>$ContactInfo[$i]['ContactInfo'][3],
+								'p_address'  =>$ContactInfo[$i]['ContactInfo'][4],
+								'p_city'     =>$ContactInfo[$i]['ContactInfo'][5],
+								'p_state'    =>$ContactInfo[$i]['ContactInfo'][6],
+								'p_pin'		 =>$ContactInfo[$i]['ContactInfo'][7],
+								'mobile'     =>$ContactInfo[$i]['ContactInfo'][8],
+								'phone'      =>$ContactInfo[$i]['ContactInfo'][9],
+								'alt_mobile' =>$ContactInfo[$i]['ContactInfo'][10],
+								'alt_email'  =>$ContactInfo[$i]['ContactInfo'][11]
+								));
+					//IdentificationandBankInfo
+					$identification =\EmpIdentification::insertGetId(array(
+										'user_id'         =>$uId,
+										'pan'             => $IdentificationandBankInfo[$i]['IdentificationandBankInfo'][0],
+										'passport_no'     => $IdentificationandBankInfo[$i]['IdentificationandBankInfo'][1],
+										'adhar_no'        => $IdentificationandBankInfo[$i]['IdentificationandBankInfo'][2],
+										'voter_id'        => $IdentificationandBankInfo[$i]['IdentificationandBankInfo'][3],
+										'driving_licence' => $IdentificationandBankInfo[$i]['IdentificationandBankInfo'][4],
+								    	));
+					// Bank Detail
+					$bankDetails   =\EmpBankDetail::insertGetId(array(
+										'user_id'    =>$uId,
+										'account_no' =>$IdentificationandBankInfo[$i]['IdentificationandBankInfo'][5],
+										'bank_name'  =>$IdentificationandBankInfo[$i]['IdentificationandBankInfo'][6],
+										'branch'     =>$IdentificationandBankInfo[$i]['IdentificationandBankInfo'][7],
+										'IFSC'       =>$IdentificationandBankInfo[$i]['IdentificationandBankInfo'][8],
+										'micrno'     =>$IdentificationandBankInfo[$i]['IdentificationandBankInfo'][9]
+					    				));
+					// Esi and PF Detail
+					$PfEsi        = \PfEsi::insertGetId(array(
+										'user_id'      => $uId,
+										'isPF'         => $PFandESIInformation[$i]['PFandESIInformation'][0],
+										'pfno'         => $PFandESIInformation[$i]['PFandESIInformation'][1],
+										'pfenno'       => $PFandESIInformation[$i]['PFandESIInformation'][2],
+										'epfno'        => $PFandESIInformation[$i]['PFandESIInformation'][3],
+										'relationship' => $PFandESIInformation[$i]['PFandESIInformation'][4],
+										'isESI'        => $PFandESIInformation[$i]['PFandESIInformation'][5],
+										'esino'        => $PFandESIInformation[$i]['PFandESIInformation'][6]
+							    		));
+					// Job details
+					$jobdetailsId         =\JobDetails::insertGetId(array(
+											'user_id'             =>$uId,
+											'joining_date'        =>$JobDetails[$i]['JobDetails'][0],
+											'job_type'            =>$JobDetails[$i]['JobDetails'][1],
+											'designation'         =>$JobDetails[$i]['JobDetails'][2],
+											'department'          =>$JobDetails[$i]['JobDetails'][3],
+											'reporting_manager'   =>$JobDetails[$i]['JobDetails'][4],
+											'payment_mode'        =>$JobDetails[$i]['JobDetails'][5],
+											'hr_verification'     =>$JobDetails[$i]['JobDetails'][6],
+											'police_verification' =>$JobDetails[$i]['JobDetails'][7],
+											'emp_type'            =>$JobDetails[$i]['JobDetails'][8],
+											'client_id'           =>$JobDetails[$i]['JobDetails'][9]
+							    			));
+					//EducationalBackground
+					$eduction          = \EmpEducation::insertGetId(array(
+											'user_id'            => $uId,
+											'school_name'        => $EducationalBackground[$i]['EducationalBackground'][0],
+											'school_location'    => $EducationalBackground[$i]['EducationalBackground'][1],
+											'school_percentage'  => $EducationalBackground[$i]['EducationalBackground'][2],
+											'puc_name'           => $EducationalBackground[$i]['EducationalBackground'][3],
+											'puc_location'       => $EducationalBackground[$i]['EducationalBackground'][4],
+											'puc_percentage'     => $EducationalBackground[$i]['EducationalBackground'][5],
+											'diploma_name'       => $EducationalBackground[$i]['EducationalBackground'][6],
+											'diploma_location'   => $EducationalBackground[$i]['EducationalBackground'][7],
+											'diploma_percentage' => $EducationalBackground[$i]['EducationalBackground'][8],
+											'degree_name'        => $EducationalBackground[$i]['EducationalBackground'][9],
+											'degree_location'    => $EducationalBackground[$i]['EducationalBackground'][10],
+											'degree_percentage'  => $EducationalBackground[$i]['EducationalBackground'][11],
+											'master_name'        => $EducationalBackground[$i]['EducationalBackground'][12],
+											'master_location'    => $EducationalBackground[$i]['EducationalBackground'][13],
+											'master_percentage'  => $EducationalBackground[$i]['EducationalBackground'][14]
+							    			));
+					// Experiance
+					$companyDetails		= 	\WorkExperiance::insertGetId(array(
+												'user_id'      =>$uId,
+												'company_name' =>$WorkExperience[$i]['WorkExperience'][0],
+												'location'     =>$WorkExperience[$i]['WorkExperience'][1],
+												'designation'  =>$WorkExperience[$i]['WorkExperience'][2],
+												'last_ctc'     =>$WorkExperience[$i]['WorkExperience'][3],
+												'join_date'    =>$WorkExperience[$i]['WorkExperience'][4],
+												'leaving_date' =>$WorkExperience[$i]['WorkExperience'][5]
+												));
+					\DB::commit();
+					\Mail::send('emails.user_credential',array('name'=>$val['users'][0],'username'=>$username,'password'=>$password),function($message) use($email,$username){
+						$message->to($email,$username)->subject('User Credential');
+					});
+
+					$i++;
+				}// end foreach of database insertion
+				// success message
+					$success= array('success'=>"Successfully uploaded your Employees");
+					echo json_encode($success);
+					return;
+			}// end else part
+
+		}// end ajax condition
 		
 		
-	}
+	} // end function 
 
 
 }
