@@ -133,27 +133,7 @@
 							</div><!-- end form2 -->
 							<!-- end contact Info -->
 							<!-- start user credentail -->
-							<h2>User Credential</h2>
-							<div class="form3">
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="username">UserName</label>
-									<div class="col-lg-5">
-										<input type="text" name="username" id="username" placeholder="UserName" class="form-control required">
-									</div><!-- end input-form  -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="password">Password</label>
-									<div class="col-lg-5">
-										<input type="password" name="password" id="password" placeholder="Password" class="form-control required">
-									</div><!-- end input-form  -->
-								</div><!-- end form-group -->
-								<div class="form-group">
-									<label class="col-lg-2 control-label" for="confirm_password">Confirm Password</label>
-									<div class="col-lg-5">
-										<input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" class="form-control required">
-									</div><!-- end input-form  -->
-								</div><!-- end form-group -->
-							</div><!-- end form3 -->
+							
 						</div><!-- end wizard -->
 					{{Form::close()}}<!-- end form -->
 				

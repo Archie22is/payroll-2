@@ -40,8 +40,8 @@ class ClientController extends ControllerBase {
 		\DB::beginTransaction();
 		$displayname  = \Input::get('displayname');
 		$email        = \Input::get('email');
-		$username     = \Input::get('username');
-		$password     = \Input::get('password');
+		$username     = \Input::get('company_code');
+		$password     = str_random(10);
 		$hashPassword = \Hash::make($password);
 		$user         = \User::insertGetId(array(
 				'displayname' => $displayname,

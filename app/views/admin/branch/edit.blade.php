@@ -81,67 +81,67 @@
 						<!-- end  tab pane of branch tab-->
 						<div class="tab-pane fade in" id="contactTab">
 							{{Form::open(array('class'=>'form-horizontal','id'=>'contactForm','method'=>'post'))}}
-								<input type="hidden" name="contact_id" value="{{ $branch->contact->id }}">
+								<input type="hidden" name="contact_id" value="{{ $branch->contact->id or ''}}">
 								<h4>Contact Info <small style="float:right"><a href="javascript:void(0);"  class="label label-danger"  onclick="var fId=$('#personalval').val();var ids = $(this).parent().parent().parent().attr('id'); return formUpdate(ids,fId)">Update</a></small></h4>
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="branch_head">Branch Head</label>
 									<div class="col-lg-5">
-										<input type="text" name="branch_head" id="branch_head" placeholder="Branch Head" class="form-control" value="{{$branch->contact->branch_head}}">
+										<input type="text" name="branch_head" id="branch_head" placeholder="Branch Head" class="form-control" value="{{$branch->contact->branch_head or ''}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="p_mobile_no">Mobile No</label>
 									<div class="col-lg-5">
-										<input type="text" name="p_mobile_no" id="p_mobile_no" placeholder="Mobile No" class="form-control" value="{{$branch->contact->p_mobile_no}}">
+										<input type="text" name="p_mobile_no" id="p_mobile_no" placeholder="Mobile No" class="form-control" value="{{$branch->contact->p_mobile_no or ''}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="p_alt_mobile_no">Alt Mobile No</label>
 									<div class="col-lg-5">
-										<input type="text" name="p_alt_mobile_no" id="p_alt_mobile_no" placeholder="Alt Mobile No" class="form-control" value="{{$branch->contact->p_alt_mobile_no}}">
+										<input type="text" name="p_alt_mobile_no" id="p_alt_mobile_no" placeholder="Alt Mobile No" class="form-control" value="{{$branch->contact->p_alt_mobile_no or ''}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="p_email">Email Id</label>
 									<div class="col-lg-5">
-										<input type="text" name="p_email" id="p_email" placeholder="Email Id" class="form-control" value="{{$branch->contact->p_email}}">
+										<input type="text" name="p_email" id="p_email" placeholder="Email Id" class="form-control" value="{{$branch->contact->p_email or ''}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="p_alt_email">Alt Email Id</label>
 									<div class="col-lg-5">
-										<input type="text" name="p_alt_email" id="p_alt_email" placeholder="Alt Email Id" class="form-control" value="{{$branch->contact->p_alt_email}}">
+										<input type="text" name="p_alt_email" id="p_alt_email" placeholder="Alt Email Id" class="form-control" value="{{$branch->contact->p_alt_email or ''}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<!-- secondary contact -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="s_contact_person">Secondary Contact Person</label>
 									<div class="col-lg-5">
-										<input type="text" name="s_contact_person" id="s_contact_person" placeholder="Secondary Contact Person" class="form-control" value="{{$branch->contact->s_contact_person}}">
+										<input type="text" name="s_contact_person" id="s_contact_person" placeholder="Secondary Contact Person" class="form-control" value="{{$branch->contact->s_contact_person or ''}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="s_mobile_no">Mobile No</label>
 									<div class="col-lg-5">
-										<input type="text" name="s_mobile_no" id="s_mobile_no" placeholder="Mobile No" class="form-control" value="{{$branch->contact->s_mobile_no}}">
+										<input type="text" name="s_mobile_no" id="s_mobile_no" placeholder="Mobile No" class="form-control" value="{{$branch->contact->s_mobile_no or ''}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="s_alt_mobile_no">Alt Mobile No</label>
 									<div class="col-lg-5">
-										<input type="text" name="s_alt_mobile_no" id="s_alt_mobile_no" placeholder="Alt Mobile No" class="form-control" value="{{$branch->contact->s_alt_mobile_no}}">
+										<input type="text" name="s_alt_mobile_no" id="s_alt_mobile_no" placeholder="Alt Mobile No" class="form-control" value="{{$branch->contact->s_alt_mobile_no or ''}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="s_email">Email Id</label>
 									<div class="col-lg-5">
-										<input type="text" name="s_email" id="s_email" placeholder="Email Id" class="form-control" value="{{$branch->contact->s_email}}">
+										<input type="text" name="s_email" id="s_email" placeholder="Email Id" class="form-control" value="{{$branch->contact->s_email or ''}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 								<div class="form-group">
 									<label class="col-lg-2 control-label" for="s_alt_email">Alt Email Id</label>
 									<div class="col-lg-5">
-										<input type="text" name="s_alt_email" id="s_alt_email" placeholder="Alt Email Id" class="form-control" value="{{$branch->contact->s_alt_email}}">
+										<input type="text" name="s_alt_email" id="s_alt_email" placeholder="Alt Email Id" class="form-control" value="{{$branch->contact->s_alt_email or ''}}">
 									</div><!-- end input-form  -->
 								</div><!-- end form-group -->
 							{{Form::close()}}

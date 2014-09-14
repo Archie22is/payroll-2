@@ -55,8 +55,10 @@
 <hr>
 	<!-- Display attendance details -->
 {{Form::open(array('id'=>'listForm','method'=>'post','onsubmit'=>'return validateList()','name'=>'listForm'))}}
-<button type="submit" class="btn btn-danger pull-right" id="btnSubmit">Update</button>
-<div class="clearfix"></div>
+
+<h5><span id="date-data"> </span> <button type="submit" class="btn btn-danger pull-right" id="btnSubmit">Update</button>
+<div class="clearfix"></div></h5>
+<br>
 	<div class="table-responsive">
 		<table class="table table-bordered" style="border-left:none">
 			<tr class="active">
@@ -95,34 +97,47 @@
 
 @section('script')
 <script type="text/javascript">
+	var mon = {'01': "Jan", '02': "Feb", '03': "Mar", '04': "Apr", '05': "May", '06': "Jun", '07': "Jul", '08': "Aug", '09': "Sep", 10: "Oct", 11: "Nov", 12: "Dec"};
+	var company ='';
 	$(function(){
 		var empType = $('#emp_typeSelect').val();
 		var month = $('#month').val();
 		var year  = $('#year').val();
+		
 		if(empType == 'outsource')
 		{
+			company = $('#clientSelect').find(":selected").text();
 			$('#clientHide').show();
 		}
 		else
 		{
+			company = 'In house';
 			$('#clientHide').hide();
 		}
 		$('#emp_typeSelect').change(function(){
 			var empType = $(this).val();
 			if(empType == 'outsource')
 			{
+				company = $('#clientSelect').find(":selected").text();
 				$('#clientHide').show();
 			}
 			else
 			{
+				company = 'In house';
 				$('#clientHide').hide();
 			}
+			$('#date-data').text('Attendance of '+company+' Employees for '+mon[month]+' '+year);
+		});
+		$('#clientSelect').change(function(){
+			company = $('#clientSelect').find(":selected").text();
+			$('#date-data').text('Attendance of '+company+' Employees for '+mon[month]+' '+year);
 		});
 		// dynamic month year
 		if( month && year)
-		{
+		{   
 			var days = new Date(year, month, 0).getDate();
 			$('.pay_days').val(days);
+			$('#date-data').text('Attendance of '+company+' Employees for '+mon[month]+' '+year);
 		}
 
 	});
@@ -140,9 +155,11 @@
 			alert('Please select Year');
 			return false;
 		}
+
 	}
 	function validateList()
 	{
+		var list = $('#listForm').serialize();
 		var pdays = document.listForm.elements["present_days[]"];
 		var ldays = document.listForm.elements["leave_days[]"];
 		var lwp   = document.listForm.elements["lwp[]"];
@@ -190,25 +207,35 @@
 		});
 		$.ajax({
 			type:'put',
-			url:"<?php echo URL::to('') ?>",
-			data:,
+			url:"<?php echo URL::to('branch/employee-attendance/1'); ?>",
+			data:list,
 			beforeSend:function(){
-				$('btnSubmit').button('loading');
+				$('#btnSubmit').button('loading');
 			},
 			complete:function(){
-				$('btnSubmit').button('reset');
+				$('#btnSubmit').button('reset');
 			},
-			success:function(){
+			success:function(data){
+				var status = $.parseJSON(data);
 
+				if(status.success)
+				{
+					
+					$('#status').html("<div class='alert alert-success'>Successfully updated</div>");
+					$('.alert').fadeOut(3000);
+
+				}
 			}
 		});
+		return false;
 	}
-	function getDates()
+	function getDates() 
 	{
 		var month = $('#month').val();
 		var year  = $('#year').val();
 		var days = new Date(year, month, 0).getDate();
 		$('.pay_days').val(days);
+		$('#date-data').text('Attendance of '+company+' Employees for '+mon[month]+' '+year);
 	}
 </script>
 @stop

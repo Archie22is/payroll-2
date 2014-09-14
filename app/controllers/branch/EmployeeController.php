@@ -1221,6 +1221,11 @@ class EmployeeController extends ControllerBase {
 		
 		
 	} // end function 
+	function postUpload()
+	{
+		echo \Input::file('upload')->getRealPath();
+		return;
+	}
 
 
 }

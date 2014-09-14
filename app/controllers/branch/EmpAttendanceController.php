@@ -149,7 +149,28 @@ class EmpAttendanceController extends ControllerBase
 	 */
 	public function update($id)
 	{
-		//
+		if(\Request::ajax())
+		{
+			$ids = \Input::get('id');
+			$pay_days = \Input::get('pay_days');
+			$present_days = \Input::get('present_days');
+			$leave_days = \Input::get('leave_days');
+			$lwp = \Input::get('lwp');
+			$i=0;
+			foreach($ids as $val)
+			{
+				$data = array('pay_days'=>$pay_days[$i],
+								'present_days'=>$present_days[$i],
+								'leave_days' => $leave_days[$i],
+								'lwp'=>$lwp[$i]);
+				$update = \EmpAttendance::where('id','=',$val)->update($data);
+				$i++;
+			}
+		$msg = array('success'=>'Attendance updated successfully');
+		echo json_encode($msg);
+		return;
+		}
+		
 	}
 
 

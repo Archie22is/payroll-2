@@ -35,6 +35,7 @@
 					<li><a href="<?php echo URL::to('admin/branch'); ?>"><i class="fa fa-user"></i> Manage Branch</a></li><!-- manage manager -->
 					<!-- <li><a href="<?php echo URL::to('admin.empe.index'); ?>"><i class="fa fa-user"></i>Manage Employee</a></li> -->
 					<li><a href="<?php echo URL::to('admin/empe/search'); ?>"><i class="fa fa-search"></i> Search Employees</a></li>
+					<li><a href="<?php echo URL::to('admin/ctc'); ?>"><i class="fa fa-money"></i>CTC Component</a></li>
 				</ul><!-- list-unstyled -->
 				<!-- Admin Part ended -->
 				@elseif(Auth::getProfile() == 'branch')

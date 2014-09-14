@@ -13,8 +13,8 @@ class BranchController extends ControllerBase
 		// Transaction strats here because we are connecting three tables
 		\DB::beginTransaction();
 		//User credintial information
-		$username     = \Input::get('username');
-		$password     = \Input::get('password');
+		$username     = \Input::get('branch_code');
+		$password     = str_random(10);
 		$p_email      = \Input::get('p_email');
 		$s_contact_person = \Input::get('s_contact_person');
 		$hashPassword =\Hash::make($password);
@@ -111,7 +111,7 @@ class BranchController extends ControllerBase
 	 */
 	public function edit($id)
 	{
-		$branch=\Branch::where('id','=',$id)->with('contact')->firstOrFail();
+		$branch=\Branch::where('id','=',$id)->firstOrFail();
 		return \View::make('admin/branch.edit')->with('branch',$branch);
 	}
 	
@@ -189,7 +189,7 @@ class BranchController extends ControllerBase
 		$branch=\Branch::where('id','=',$id)->with('contact')->firstOrFail();
 		$user=\User::where('id','=',$branch->user_id)->firstOrFail();
 		$contact=\BranchContact::where('branch_id','=',$id)->firstOrFail();
-		$branchEmp=\BranchEmp::where('branch_id','=',$id)->firstOrFail();
+		// $branchEmp=\BranchEmp::where('branch_id','=',$id)->firstOrFail();
 		if(!$user->delete())
 		{
 			\DB::rollback();
@@ -205,11 +205,11 @@ class BranchController extends ControllerBase
 			\DB::rollback();
 			return \Redirect::back()->with('error','Failed to delete');
 		}
-		if(!$branchEmp->delete())
-		{
-			\DB::rollback();
-			return \Redirect::back()->with('error','Failed to delete');
-		}
+		// if(!$branchEmp->delete())
+		// {
+		// 	\DB::rollback();
+		// 	return \Redirect::back()->with('error','Failed to delete');
+		// }
 		else
 		{
 			\DB::commit();

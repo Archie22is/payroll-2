@@ -116,26 +116,29 @@
 								</div><!-- input company_name -->
 							</div><!-- end form-group -->
 							{{Form::close()}}
-							{{Form::open(array('id'=>'imageForm','class'=>'form-horizontal','enctype'=>'multipart/form-data','style'=>'display:none'))}}
+							{{Form::open(array('id'=>'imageForm','class'=>'form-horizontal','enctype'=>'multipart/form-data','style'=>''))}}
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="image">Photo</label>
 								<div class="col-lg-5">
 									<input type="hidden" name="form_id" value="{{$emp->employee->id}}">
-									<input style="display" type="file" name="image" id="image">
+									<input style="display:none" type="file" name="image" id="image" onchange="var img=$(this).val(); if(img){ $('#imgUpload').show();  }else{ $('#imgUpload').hide(); }">
 									<span id="rmphoto" style='display:none'></span><a href='javascript:void(0);' style='color:red;display:none' id="armphoto" onclick="$('#image').val('');$('#rmphoto').hide();$(this).hide();"><i class='fa fa-minus-circle'></i></a>
+									<span id="img-target"></span>
 									<span class="image">
-									{{HTML::image('public/img/emp/photo/'.$emp->employee->image,'',array('style'=>'width:100px;height:50px;'))}} 
 									@if($emp->employee->image)
-									<a href="javascript:void(0);" style="color:red" onclick="return changeImage()" id="imageDel"><i class="fa fa-times-circle-o fa-2x"></i></a> 
+									{{HTML::image('public/img/emp/photo/'.$emp->employee->image,'',array('style'=>'width:100px;height:50px;'))}} 
+									<a href="javascript:void(0);" style="color:red" onclick="return changeImage('delete')" id="imageDel"><i class="fa fa-times-circle-o fa-2x"></i></a> 
 									@else
-									<a href="javascript:void(0);" style="color:green" onclick="changeImage()" id="imageAdd"><i class="fa fa-plus-circle fa-2x"></i></a>	
+									{{HTML::image('public/img/person_icon.png' ,'',array('style'=>'width:100px;height:50px;'))}} 
+									<a href="javascript:void(0);" style="color:green" onclick="$('#image').click();" id="imageAdd"><i class="fa fa-plus-circle fa-2x"></i></a>	
 									@endif
+									<a href="javascript:void(0);" class="btn btn-success" onclick="$('#imageForm').submit();" style="display:none" id="imgUpload">Upload</a>
 									</span>
 									
 								</div><!-- input company_name -->
 							</div><!-- end form-group -->
 							{{Form::close()}}
-							{{Form::open(array('id'=>'signForm','class'=>'form-horizontal','style'=>'display:none'))}}
+							{{Form::open(array('id'=>'signForm','class'=>'form-horizontal','style'=>''))}}
 							<div class="form-group">
 								<label class="col-lg-2 control-label" for="signature">Signature</label>
 								<div class="col-lg-5">

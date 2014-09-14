@@ -15,7 +15,7 @@
 		if(size >= 2000000)
 
 		{
-			return "Image size must lessthan 2 mb"
+			return "Image size must be less than 2 mb"
 		}
 	}
 	function formUpdate(ids,tableId)
@@ -78,53 +78,26 @@
 			console.log(val);
 		});
 		// Image File editing
-		$('#image').change( function(event) {
-		var file=$('#image').prop('files')[0];
-		console.log(file);
-		
-		console.log(event.target);
-		var g=docvalidation($(this).val()); 
-		if(g)
-			{ alert(g); 
-				$(this).val('');
-				$('#rmphoto').hide();
-				$('#armphoto').hide();
-			}
-			else
-				{
-				 var val='<img src='+file.mozFullPath+' style="width:100px;height:50px">'; 
-				 var span='<span class="load">Uploading......</span>';
-				 $('#rmphoto').html(val+span);
-				 $('#rmphoto').show();
-				 $('#armphoto').show();
-				 var vals=$('#imageForm').serializeArray();
-				   form_data = new FormData($(this)[0]);
-				 
+		$('#image').change( function() {
+			var file     = document.getElementById('image');
+			var fd = new FormData();
+			fd.append('upload',file.files[0]);
+			$.ajax({
+				type:'post',
+				processData: false,
+				contentType: false, 
+				url:"<?php echo URL::to('branch/employee/upload-image'); ?>",
+				data:fd,
 				
-				// var form_data = new FormData('file',file);
-				// form_data.append('file',file);
-				// form_data.append('name','ff');
-				// console.log(form_data);
-				 $.ajax({
-				 	type:"PUT",
-					data:form_data,
-					url:"<?php echo URL::route('branch.employee.update','"+tableId+"') ?>",
-               		contentType:false,
-					processData: false,
-					
-					
-					success:function(data)
-					{
-						alert(data);
-					},
-					fail:function()
-					{
-						alert('errpr');
-					}
-				 });
+				success:function(data){
+					$('#img-target').html("<img src='"+data+"'/>");
 				}
-    
+			});
 		});
 
 	});
+	function changeImage()
+	{
+		alert('ff');
+	}
 </script>

@@ -38,10 +38,12 @@ Route::group(array('before'=>'admin','prefix'=>'admin'),function(){
 	Route::resource('bank','App\Controller\Admin\BankController');
 	Route::resource('dept','App\Controller\Admin\DepartmentController');
 	Route::resource('empe','App\Controller\Admin\EmployeeController');
+	Route::resource('ctc','App\Controller\Admin\CTCController');
 	Route::controller('/','App\Controller\Admin\IndexController');
 });
 // Branch Routes
 Route::group(array('before'=>'branch','prefix'=>'branch'),function(){
+	Route::post('employee/upload-image','App\Controller\Branch\EmployeeController@postUpload');
 	Route::get('employee/search','App\Controller\Branch\EmployeeController@search');
 	Route::get('employee/import','App\Controller\Branch\EmployeeController@getImportEmp');
 	Route::post('employee/import','App\Controller\Branch\EmployeeController@postImportEmp');
